@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-using System;
-using System.Collections;
+﻿using System;
 
 public abstract class SingletonBase<T> : IDisposable where T : class, new()
 {

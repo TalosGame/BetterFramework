@@ -9,7 +9,6 @@ public abstract class ResourceType
 	public const int RES_UI = RES_ASSETBUNDLE + 1;      // UI
 	public const int RES_DATAS = RES_UI + 1;            // 数据文件
 	public const int RES_AUDIO = RES_DATAS + 1;         // 声音资源
-	public const int RES_LUA = RES_AUDIO + 1;           // lua资源
 }
 
 /// <summary>

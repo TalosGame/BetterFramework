@@ -1,4 +1,15 @@
-﻿using UnityEngine;
+﻿// 作者：wangquan
+// 邮箱：wangquancomi@gmail.com
+// QQ ：408310416
+// 时间：2017/8/16/15:20
+// 类名：NotificationCenter
+//
+// 功能说明：
+// 1.模拟Object-c事件通知管理器
+// 2.方便添加和移除事件监听
+// 3.能方便传递监听事件单个或多个参数
+
+using UnityEngine;
 using System.Collections.Generic;
 
 public class NotificationCenter : SingletonBase<NotificationCenter>

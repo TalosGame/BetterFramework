@@ -105,7 +105,7 @@ public class HotUpdateMgr : DDOLSingleton<HotUpdateMgr>
         yield return StartCoroutine(DownloadGameConfigFile());
         if (TableGameConfig == null)
         {
-            Debugger.LogError("下载版本文件异常！");
+            Debug.LogError("下载版本文件异常！");
             PostLoadingState(LoadingState.downLoadFailed);
             yield break;
         }
@@ -129,7 +129,7 @@ public class HotUpdateMgr : DDOLSingleton<HotUpdateMgr>
         // 检查是否更新
         if (!CheckHaveUpdateFiles())
         {
-            Debugger.Log("No files need to down load!");
+            Debug.Log("No files need to down load!");
             PostLoadingState(LoadingState.latestVersion);
             yield break;
         }
@@ -152,7 +152,7 @@ public class HotUpdateMgr : DDOLSingleton<HotUpdateMgr>
     /// </summary>
     private void SyncGameSetting()
     {
-        Debugger.useLog = tableGameConfig.openDebugLog;
+        Debug.logger.logEnabled = tableGameConfig.openDebugLog;
         SocketClient.EnableLogging(tableGameConfig.openNetDebugLog);
         Input.multiTouchEnabled = tableGameConfig.multyTouchEnabled;
         Application.targetFrameRate = tableGameConfig.targetFrameRate;
@@ -184,7 +184,7 @@ public class HotUpdateMgr : DDOLSingleton<HotUpdateMgr>
 
         if (www.error != null)
         {
-            Debugger.LogError("Down load game version file error!" + www.error);
+            Debug.LogError("Down load game version file error!" + www.error);
 
             www.Dispose();
             www = null;
@@ -206,7 +206,7 @@ public class HotUpdateMgr : DDOLSingleton<HotUpdateMgr>
 
         if (www.error != null)
         {
-            Debugger.LogError("Down load game res config file error!" + www.error);
+            Debug.LogError("Down load game res config file error!" + www.error);
 
             www.Dispose();
             www = null;
@@ -368,7 +368,7 @@ public class HotUpdateMgr : DDOLSingleton<HotUpdateMgr>
         // 检查是否更新
         if (!CheckHaveUpdateFiles())
         {
-            Debugger.Log("No files need to down load!");
+            Debug.Log("No files need to down load!");
             PostLoadingState(LoadingState.checkUpdateResErr, isPostTolua:toLua);
             return;
         }

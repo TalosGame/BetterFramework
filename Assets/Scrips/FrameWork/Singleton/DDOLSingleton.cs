@@ -1,6 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
-using LuaInterface;
 
 public abstract class DDOLSingleton<T> : MonoBehaviour where T : DDOLSingleton<T>
 {
@@ -54,7 +52,7 @@ public abstract class DDOLSingleton<T> : MonoBehaviour where T : DDOLSingleton<T
 	{
 		_instance = null;
 		Destroy();
-        Debugger.Log(this.gameObject.name + " OnDestroy!");
+        Debug.Log(this.gameObject.name + " OnDestroy!");
 	}
 
 	protected virtual void Destroy() { }

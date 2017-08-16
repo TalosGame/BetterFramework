@@ -197,7 +197,7 @@ public class GameSocket : DDOLSingleton<GameSocket>
         }
     }
 
-    #region 心跳处理
+    #region heart message function
     public void StartSendHeartMsg()
     {
         if (heartMsgThread != null)
@@ -254,7 +254,7 @@ public class GameSocket : DDOLSingleton<GameSocket>
     }
     #endregion
 
-    #region 处理接收消息
+    #region recive message function
     void Update()
     {
         UpdateReciveMessage();
@@ -316,7 +316,7 @@ public class GameSocket : DDOLSingleton<GameSocket>
     }
     #endregion
 
-    #region 处理发送消息
+    #region send message function
     public void SendMessage(int msgId, byte[] datas)
     {
 //         // 重发队列有

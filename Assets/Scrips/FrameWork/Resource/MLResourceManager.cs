@@ -1,8 +1,18 @@
-﻿using UnityEngine;
+﻿// 作者：wangquan
+// 邮箱：wangquancomi@gmail.com
+// QQ ：408310416
+// 时间：2017/8/16/15:08
+// 类名：MLResourceManager
+//
+// 功能说明：
+// 1.同时管理Resources和AB资源
+// 2.统一调用接口，方便开发维护
+// 3.能同时使用2种不同资源
+
+using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using LuaInterface;
 
 public enum ResManagerType
 {
@@ -246,14 +256,14 @@ public class MLResourceManager : DDOLSingleton<MLResourceManager>
         {
             if (_obj == null)
             {
-                Debugger.LogError("resource load prefab object is null!");
+                Debug.LogError("resource load prefab object is null!");
                 return;
             }
 
             GameObject ret = MonoExtendUtil.CreateChild(parent, _obj as GameObject);
             if (ret == null)
             {
-                Debugger.LogError("Instantiate object is null!");
+                Debug.LogError("Instantiate object is null!");
                 load(null);
                 return;
             }

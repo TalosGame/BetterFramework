@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using LuaInterface;
 
 /// <summary>
 /// 下载管理器
@@ -16,7 +14,7 @@ public class DownLoadManager : DDOLSingleton<DownLoadManager>
         set
         {
             downLoadURL = value;
-            Debugger.Log("Down load server url===" + downLoadURL);
+            Debug.Log("Down load server url===" + downLoadURL);
         }
     }
 
@@ -46,7 +44,7 @@ public class DownLoadManager : DDOLSingleton<DownLoadManager>
     {
         if (DownLoadFiles.Contains(data))
         {
-            Debugger.LogWarning("Down load file already exist! name:" + data.name);
+            Debug.LogWarning("Down load file already exist! name:" + data.name);
             return;
         }
 
@@ -60,7 +58,7 @@ public class DownLoadManager : DDOLSingleton<DownLoadManager>
     {
         foreach (ResData data in DownLoadFiles)
         {
-            Debugger.Log("Begin down load file name==" + data.name);
+            Debug.Log("Begin down load file name==" + data.name);
         }
     }
 

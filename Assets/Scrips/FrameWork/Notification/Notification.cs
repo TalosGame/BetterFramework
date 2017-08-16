@@ -1,11 +1,18 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using LuaInterface;
+﻿// 作者：wangquan
+// 邮箱：wangquancomi@gmail.com
+// QQ ：408310416
+// 时间：2017/8/16/15:24
+// 类名：Notification
+//
+// 功能说明：
+// 1.具体的消息类
+// 2.可以获取消息传递的数据
+// 3.包装了获取多个参数的方法
 
-/// <summary>
-/// 消息体类
-/// miller 2015-3-11
-/// </summary>
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
 public class Notification : IEnumerable<KeyValuePair<string, object>>
 {
     private string _name;      // 消息名称
@@ -105,7 +112,7 @@ public class Notification : IEnumerable<KeyValuePair<string, object>>
 			object useInf = userInfo [i];
 			if (useInf.GetType () != typeof(Dictionary<string, object>)) 
 			{
-				Debugger.Log ("user info params must dictionary!");
+				Debug.Log ("user info params must dictionary!");
 				continue;
 			}
 
