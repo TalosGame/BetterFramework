@@ -1,6 +1,6 @@
 ﻿/// <summary>
 /// 创建者：dyjia.
-/// 时间： 2017-7-15 18:49:05
+/// Date： 2017-7-15 18:49:05
 /// 描述: 用于延迟显示物体
 /// </summary>
 using System.Collections;

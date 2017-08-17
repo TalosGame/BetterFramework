@@ -1,13 +1,32 @@
-﻿// 作者：wangquan
-// 邮箱：wangquancomi@gmail.com
-// QQ ：408310416
-// 时间：2017/8/16/15:08
-// 类名：MLResourceManager
+﻿//
+// MLResourceManager.cs
 //
-// 功能说明：
-// 1.同时管理Resources和AB资源
-// 2.统一调用接口，方便开发维护
-// 3.能同时使用2种不同资源
+// Author:
+//       wangquan <wangquancomi@gmail.com>
+// Desc:
+//      1.同时管理Resources和AB资源
+//      2.统一接口调用，方便前期快速开发与后期AB资源打包
+//      3.能同时使用2种不同资源
+//
+// Copyright (c) 2017 
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
 
 using UnityEngine;
 using System;
@@ -357,4 +376,3 @@ public class MLResourceManager : DDOLSingleton<MLResourceManager>
     }
     #endregion
 }
-

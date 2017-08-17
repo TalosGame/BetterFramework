@@ -5,7 +5,7 @@ using System;
 
 /// <summary>
 /// 创建者：dyjia
-/// 时间： 2017-8-10 22:48:03
+/// Date： 2017-8-10 22:48:03
 /// 描述： 用于监听键盘事件
 /// </summary>
 public class KeyboardManager : DDOLSingleton<KeyboardManager>

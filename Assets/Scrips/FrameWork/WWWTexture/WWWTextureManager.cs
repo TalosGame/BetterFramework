@@ -5,7 +5,7 @@ using System;
 
 /// <summary>
 /// 创建者：dyjia
-/// 时间： 2017-8-10 22:48:03
+/// Date： 2017-8-10 22:48:03
 /// 描述： 用于管理网络下载图片资源
 /// </summary>
 public class WWWTextureManager : DDOLSingleton<WWWTextureManager>

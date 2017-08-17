@@ -1,34 +1,42 @@
-﻿using UnityEngine;
-using System;
+﻿//
+// MLResourceManager.cs
+//
+// Author:
+//       wangquan <wangquancomi@gmail.com>
+//       QQ: 408310416
+// Desc:
+//      1.预缓存声音,能控制音乐音效是否循环和延迟播放.
+//      2.能支持同时播放多个相同的声音有叠加效果.
+//      3.当缓存池个数不够的情况,需要把播放列表中最早播放的声音顶掉.
+//
+// Copyright (c) 2017 
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using LuaInterface;
 
-/// <summary>
-/// 声音控制类
-/// 
-/// 作者：Miller
-/// QQ: 408310416
-/// Email: wangquan84@126.com
-/// 
-/// 描述说明:
-/// 1. 之前调用lua的方法全部去除,声音控制不需要有热更需求.
-/// lua提供一个声音播放，停止的接口统一调用即可.
-/// 2. 预缓存声音,能控制音乐音效是否循环和延迟播放.
-/// 3. 能支持同时播放多个相同的声音有叠加效果.
-/// 4. 当缓存池个数不够的情况,需要把播放列表中最早播放的声音顶掉.
-/// </summary>
 public class SoundManager : DDOLSingleton<SoundManager>
 {
-	private const string SoundController_Preload = "SoundController.Preload";
-	private const string SoundController_GetEvent = "SoundController.GetEvent";
-	private const string SoundController_GameBgmStart = "SoundController.GameBgmStart";
-	private const string SoundController_StartBossSound = "SoundController.StartBossSound";
-	private const string SoundController_BossBattleBGM = "SoundController.BossBattleBGM";
-	private const string SoundController_BgmOff = "SoundController.BgmOff";
-	private const string SoundController_SetSound = "SoundController.SetSound";
-
 	private const string BASE_SOUND_PREFAB = "BaseAudio";   // base sound prefab
 
 	// 是否播放音乐
@@ -43,7 +51,7 @@ public class SoundManager : DDOLSingleton<SoundManager>
     // 音效音量
     private float soundVolume = 1.0f;
 
-    // 上一个播放的音效及时间
+    // 上一个播放的音效及Date
     private string lastPlayName = "";
 	private long lastPlayTime = 0;
 

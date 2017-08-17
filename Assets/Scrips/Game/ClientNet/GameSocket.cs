@@ -47,7 +47,7 @@ public struct RequestMessage
     // 消息数据
     public byte[] datas;
 
-    // 消息时间毫秒数
+    // 消息Date毫秒数
     public long time;
 
     public RequestMessage(int msgId, int identiy, byte[] datas)

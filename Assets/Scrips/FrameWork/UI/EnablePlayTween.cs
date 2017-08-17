@@ -1,6 +1,6 @@
 ﻿/// <summary>
 /// 创建者：dyjia
-/// 时间： 2017-7-19 21:49:35
+/// Date： 2017-7-19 21:49:35
 /// 描述： 用于显示隐藏节点时控制动画播放
 /// </summary>
 using System.Collections;

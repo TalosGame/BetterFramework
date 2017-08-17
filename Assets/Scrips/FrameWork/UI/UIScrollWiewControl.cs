@@ -1,6 +1,6 @@
 ﻿/// <summary>
 /// 创建者：dyjia.
-/// 时间： 2017-7-27 17:22:10
+/// Date： 2017-7-27 17:22:10
 /// 描述： 用于控制scroll view的自动到下一个item
 /// </summary>
 using System.Collections;

@@ -373,8 +373,8 @@ public sealed class LuaHelper
     /// 牌桌倒计时
     /// </summary>
     /// <param name="go">Go.</param>
-    /// <param name="start">开始时间.</param>
-    /// <param name="stop">结束时间.</param>
+    /// <param name="start">开始Date.</param>
+    /// <param name="stop">结束Date.</param>
     /// <param name="speed">间隔速度.</param>
     public static void SetCountLabelTime(GameObject go, int start, int stop, int speed)
     {
@@ -464,12 +464,12 @@ public sealed class LuaHelper
         return sArray;
     }
 
-    /// <summary>
-    /// 转换时间戳
-    /// </summary>
-    /// <param name="str"></param>
-    /// <returns></returns>
-    public static long GetTimeLong(string str)
+	/// <summary>
+	/// 转换时间戳
+	/// </summary>
+	/// <param name="str"></param>
+	/// <returns></returns>
+	public static long GetTimeLong(string str)
     {
         DateTime dt2 = Convert.ToDateTime(str);
         string time1 = string.Format("{0:MMddHHmmss}", dt2);
@@ -501,10 +501,10 @@ public sealed class LuaHelper
         }
         return str;
     }
-    /// <summary>
-    /// 处理开房记录中时间显示的字符
-    /// </summary>
-    public static string StringTime(string str)
+	/// <summary>
+	/// 处理开房记录中时间显示的字符
+	/// </summary>
+	public static string StringTime(string str)
     {
         if (str[str.Length - 1] == ':')
         {
@@ -1270,7 +1270,7 @@ public sealed class LuaHelper
 	/// <summary>
 	/// 手机震动
 	/// </summary>
-	/// <param name="times">振动时间</param>
+	/// <param name="times">振动Date</param>
 	public static void GetVibrateStrength(int times)
 	{
 		PhoneInformationManager.Instance.GetVibrateStrength(times);

@@ -322,7 +322,7 @@ public class HotUpdateMgr : DDOLSingleton<HotUpdateMgr>
             || string.IsNullOrEmpty(lobbyResConfig.version)
             || CheckVersion(TableGameConfig.version, lobbyResConfig.version) <= 0)
         {
-            Debugger.Log("Lobby Version code is same!");
+            Debug.Log("Lobby Version code is same!");
             return false;
         }
 

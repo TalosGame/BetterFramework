@@ -1,5 +1,33 @@
+//
+// ResourceDefine.cs
+//
+// Author:
+//       wangquan <wangquancomi@gmail.com>
+// Desc:
+//      1.资源抽象基类
+//      2.统一同步与异步资源加载，卸载接口
+//
+// Copyright (c) 2017 
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+
 using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 
 // 资源类型
@@ -9,11 +37,9 @@ public abstract class ResourceType
 	public const int RES_UI = RES_ASSETBUNDLE + 1;      // UI
 	public const int RES_DATAS = RES_UI + 1;            // 数据文件
 	public const int RES_AUDIO = RES_DATAS + 1;         // 声音资源
+    public const int RES_LUA = RES_AUDIO + 1;           // lua资源
 }
 
-/// <summary>
-/// 资源定义类
-/// </summary>
 public class ResourceDefine
 {
 	// 窗口预设id和预设名字典
@@ -94,8 +120,6 @@ public class ResourceDefine
 			return null;
 		}
 
-		string path = string.Format("{0}/{1}", ret, name);
-		//Debug.Log("Resources path===" + path);
-		return path;
+		return string.Format("{0}/{1}", ret, name);
 	}
 }

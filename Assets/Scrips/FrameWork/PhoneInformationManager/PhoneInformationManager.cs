@@ -34,7 +34,7 @@ public class PhoneInformationManager : DDOLSingleton<PhoneInformationManager> {
     /// <summary>
     /// 获取手机震动
     /// </summary>
-    /// <param name="times">振动时间</param>
+    /// <param name="times">振动Date</param>
     public void GetVibrateStrength(int times) {
 #if UNITY_ANDROID  && !UNITY_EDITOR
         AndroidJavaClass jc = new AndroidJavaClass("com.unity3d.player.UnityPlayer");

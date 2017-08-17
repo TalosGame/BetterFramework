@@ -35,7 +35,7 @@ public abstract class UIWindowBase : MonoBehaviour
 	// 窗口打开方式
 	public WindowShowStyle showStyle = WindowShowStyle.Normal;
 
-	// 窗口打开或关闭时间
+	// 窗口打开或关闭Date
 	public float duration = 0.2f;
 
 	// 移动到某个点

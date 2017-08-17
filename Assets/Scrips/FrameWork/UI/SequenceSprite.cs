@@ -1,6 +1,6 @@
 ﻿/// <summary>
 /// 创建者：dyjia
-/// 时间： 2017-7-15 21:24:07
+/// Date： 2017-7-15 21:24:07
 /// 描述： 用于给Sprite播放序列帧动画
 /// </summary>
 using System.Collections;

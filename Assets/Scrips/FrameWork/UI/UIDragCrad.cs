@@ -1,6 +1,6 @@
 ﻿/// <summary>
 /// 创建者：dyjia
-/// 时间： 2017-7-20 19:26:05
+/// Date： 2017-7-20 19:26:05
 /// 描述： 用于拖拽手牌打牌
 /// </summary>
 using System.Collections;

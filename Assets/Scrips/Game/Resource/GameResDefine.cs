@@ -1,8 +1,8 @@
-﻿// 作者：wangquan
-// 邮箱：wangquancomi@gmail.com
-// QQ ：408310416
-// 时间：2017/8/16/15:08
-// 类名：GameResDefine
+﻿// Author：wangquan
+// Mail  ：wangquancomi@gmail.com
+// QQ    ：408310416
+// Date  ：2017/8/16/16:21
+// Class ：GameResDefine
 
 /// <summary>
 /// 游戏中UI窗口定义
@@ -18,7 +18,7 @@ public class GameWindowID : UIWindowID
 /// </summary>
 public class GameResourceType : ResourceType
 {
-    public const int RES_LUA = RES_AUDIO + 1;           // lua资源
+    
 }
 
 public class GameResDefine : ResourceDefine
@@ -35,7 +35,7 @@ public class GameResDefine : ResourceDefine
         AddExResourcePath(ResourceType.RES_UI, "UI");
         AddExResourcePath(ResourceType.RES_DATAS, "Datas");
         AddExResourcePath(ResourceType.RES_AUDIO, "Sounds");
-        AddExResourcePath(GameResourceType.RES_LUA, "lua");
+        AddExResourcePath(ResourceType.RES_LUA, "lua");
     }
 }
 

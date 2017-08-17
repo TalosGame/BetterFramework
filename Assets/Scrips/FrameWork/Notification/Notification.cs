@@ -1,10 +1,10 @@
-﻿// 作者：wangquan
-// 邮箱：wangquancomi@gmail.com
-// QQ ：408310416
-// 时间：2017/8/16/15:24
-// 类名：Notification
+﻿// Author：wangquan
+// Mail  ：wangquancomi@gmail.com
+// QQ    ：408310416
+// Date  ：2017/8/16/16:22
+// Class ：Notification
 //
-// 功能说明：
+// Desc：
 // 1.具体的消息类
 // 2.可以获取消息传递的数据
 // 3.包装了获取多个参数的方法
