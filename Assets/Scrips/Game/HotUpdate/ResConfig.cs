@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Xml;
 using System.Xml.Serialization;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using LuaInterface;
-using UnityEngine;
 
 /// <summary>
 /// 游戏配置表

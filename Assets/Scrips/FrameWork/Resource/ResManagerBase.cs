@@ -3,6 +3,7 @@
 //
 // Author:
 //       wangquan <wangquancomi@gmail.com>
+//       QQ: 408310416
 // Desc:
 //      1.资源抽象基类
 //      2.统一同步与异步资源加载，卸载接口

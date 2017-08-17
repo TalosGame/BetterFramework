@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using LuaInterface;
 
 /// <summary>
@@ -60,7 +59,7 @@ public class GameAbAssets
 /// <summary>
 /// AB资源信息数据管理器
 /// </summary>
-public class ABAssetDataMgr : SingletonBase<ABAssetDataMgr>
+public class ABAssetData : ABAssetDataBase
 {
     private Dictionary<string, ResData> luaAssetsInfo = new Dictionary<string, ResData>();
     private Dictionary<string, ResData> lobbyAssetsInfo = new Dictionary<string, ResData>();
@@ -179,7 +178,7 @@ public class ABAssetDataMgr : SingletonBase<ABAssetDataMgr>
         }
     }
 
-    public ResData FindResData(string name, int resType = -1)
+    public override ResData FindResData(string name, int resType = -1)
     {
         return FindResData(name, CurrentProductId, resType);
     }
@@ -188,7 +187,7 @@ public class ABAssetDataMgr : SingletonBase<ABAssetDataMgr>
     {
         ResData data = null;
 
-        if (resType == GameResourceType.RES_LUA)
+        if (resType == ResourceType.RES_LUA)
         {
             if (luaAssetsInfo.TryGetValue(name, out data))
             {

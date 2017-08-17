@@ -2,7 +2,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using LuaInterface;
 
 /// <summary>
 /// 已加载的asset bundle
@@ -29,26 +28,30 @@ public class AssetBundleManager : ResManagerBase
     #region asset bundle 同步加载
     protected override UnityEngine.Object Load(ResourceInfo info)
     {
-        Debugger.Log("load assetbundle name:" + info.Name);
-
         ResData bundleData = GetBundleRes(info.Name, info.ResType);
         if (bundleData == null)
         {
-            Debugger.LogError("Get bundle data error!");
+            Debug.LogError("Get bundle data error! AB name:" + info.Name);
             return null;
         }
 
         AssetBundle assetBundle = GetCacheAssetBundle(bundleData.name);
         if (assetBundle != null)
+        {
             return assetBundle.LoadAsset(bundleData.name);
+        }
 
         assetBundle = LoadSyncAssetBundle(bundleData);
         if(assetBundle == null)
+        {
             return null;
+        }
 
         UnityEngine.Object assetObj = assetBundle.LoadAsset(bundleData.name);
         if (assetObj == null)
+        {
             return null;
+        }
 
         info._assetObj = assetObj;
         return assetObj;
@@ -74,7 +77,7 @@ public class AssetBundleManager : ResManagerBase
             ResData depData = GetBundleResDirect(dependence);
             if (depData == null)
             {
-                Debugger.LogError("Find dependend bundle error! name:" + dependence);
+                Debug.LogError("Find dependend bundle error! name:" + dependence);
                 continue;
             }
 
@@ -87,14 +90,14 @@ public class AssetBundleManager : ResManagerBase
         string path = PathConfiger.GetABFilePath(data.bundleName);
         if (path == string.Empty || path == "")
         {
-            Debugger.LogError("load sync asset bundle error! path===" + path);
+            Debug.LogError("load sync asset bundle error! path===" + path);
             return null;
         }
 
         AssetBundle assetbundle = AssetBundle.LoadFromFile(path);
         if (assetbundle == null)
         {
-            Debugger.LogError("load sync asset bundle error! path===" + path);
+            Debug.LogError("load sync asset bundle error! path===" + path);
             return null;
         }
 
@@ -109,7 +112,7 @@ public class AssetBundleManager : ResManagerBase
         ResData bundleData = GetBundleRes(info.Name, info.ResType);
         if (bundleData == null)
         {
-            Debugger.LogError("Get bundle data error!");
+            Debug.LogError("Get bundle data error!");
             return;
         }
 
@@ -346,7 +349,7 @@ public class AssetBundleManager : ResManagerBase
         ResData bundleData = GetBundleRes(info.Name, info.ResType);
         if (bundleData == null)
         {
-            Debugger.LogError("Get bundle data error!");
+            Debug.LogError("Get bundle data error!");
             return null;
         }
 

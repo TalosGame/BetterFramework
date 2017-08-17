@@ -3,6 +3,7 @@
 //
 // Author:
 //       wangquan <wangquancomi@gmail.com>
+//       QQ: 408310416
 // Desc:
 //      1.同时管理Resources和AB资源
 //      2.统一接口调用，方便前期快速开发与后期AB资源打包

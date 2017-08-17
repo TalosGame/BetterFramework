@@ -1,9 +1,6 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using LuaInterface;
 
 /// <summary>
 /// 本地游戏资源配置数据管理
@@ -25,6 +22,20 @@ public class LocalResConfigMgr : SingletonBase<LocalResConfigMgr>
         set { productId = value; }
     }
 
+    private ABAssetData abAssetData;
+
+    protected override void Init()
+    {
+        ABAssetDataBase abDataBase = ABAssetDataMgr.Instance.AbAssetData;
+        if(abDataBase == null)
+        {
+            Debug.LogError("AB Asset data is null!");
+            return;
+        }
+
+        abAssetData = abDataBase as ABAssetData;
+    }
+
     #region 读取本地资源配置
     /// <summary>
     /// 读取本地资源配置数据
@@ -33,7 +44,7 @@ public class LocalResConfigMgr : SingletonBase<LocalResConfigMgr>
     {
         // 首先读取沙盒目录下资源配置文件
         string xmlPath = PathConfiger.GetSandboxFilePath(TableGameRes.FILE_NAME);
-        Debugger.Log("Sandbox xml file path====" + xmlPath);
+        Debug.Log("Sandbox xml file path====" + xmlPath);
         if (MLFileUtil.CheckFileExits(xmlPath))
         {
             localTableResConfig = XMLSerializer.Read<TableGameRes>(xmlPath) as TableGameRes;
@@ -47,14 +58,14 @@ public class LocalResConfigMgr : SingletonBase<LocalResConfigMgr>
     private IEnumerator LoadLocalGameResAsync()
     {
         string xmlPath = string.Format("{0}{1}", PathConfiger.PACKAGE_STREAMING_DATA_PATH, TableGameRes.FILE_NAME);
-        Debugger.Log("streaming xml file path==" + xmlPath);
+        Debug.Log("streaming xml file path==" + xmlPath);
         WWW xmlWWW = new WWW(xmlPath);
         yield return xmlWWW;
 
         byte[] datas = xmlWWW.bytes;
         if (datas == null || datas.Length <= 0)
         {
-            Debugger.LogError("Load resConfig xml in streaming path error!");
+            Debug.LogError("Load resConfig xml in streaming path error!");
             yield break;
         }
 
@@ -75,12 +86,12 @@ public class LocalResConfigMgr : SingletonBase<LocalResConfigMgr>
     {
         if (LocalTableResConfig == null)
         {
-            Debugger.LogError("加载本地资源配置数据异常!");
+            Debug.LogError("加载本地资源配置数据异常!");
             return;
         }
 
         // 加载大厅AB文件信息
-        ABAssetDataMgr.Instance.LoadLobbyAssetInfo(LocalTableResConfig);
+        abAssetData.LoadLobbyAssetInfo(LocalTableResConfig);
     }
 
     /// <summary>
@@ -91,7 +102,7 @@ public class LocalResConfigMgr : SingletonBase<LocalResConfigMgr>
     {
         LocalTableResConfig.lobbyResConfig = lobbyResConfig;
 
-        ABAssetDataMgr.Instance.SyncLobbyAssetInfo(LocalTableResConfig);
+        abAssetData.SyncLobbyAssetInfo(LocalTableResConfig);
 
         string xmlPath = PathConfiger.GetSandboxFilePath(TableGameRes.FILE_NAME);
         XMLSerializer.Save<TableGameRes>(xmlPath, LocalTableResConfig);
@@ -99,7 +110,7 @@ public class LocalResConfigMgr : SingletonBase<LocalResConfigMgr>
 
     public void LoadGameResConfig(int productId)
     {
-        ABAssetDataMgr.Instance.LoadGameAssetsInfo(LocalTableResConfig, productId);
+        abAssetData.LoadGameAssetsInfo(LocalTableResConfig, productId);
     }
 
     /// <summary>
@@ -113,7 +124,7 @@ public class LocalResConfigMgr : SingletonBase<LocalResConfigMgr>
 
         LocalTableResConfig.gameResConfig.RebuildGameRes(newGameRes, productId);
 
-        ABAssetDataMgr.Instance.SyncGameAssetInfo(LocalTableResConfig, productId);
+        abAssetData.SyncGameAssetInfo(LocalTableResConfig, productId);
 
         string xmlPath = PathConfiger.GetSandboxFilePath(TableGameRes.FILE_NAME);
         XMLSerializer.Save<TableGameRes>(xmlPath, LocalTableResConfig);
@@ -127,7 +138,7 @@ public class LocalResConfigMgr : SingletonBase<LocalResConfigMgr>
         {
             if (localTableResConfig == null)
             {
-                Debugger.LogError("本地游戏资源配置数据异常!");
+                Debug.LogError("本地游戏资源配置数据异常!");
                 return null;
             }
 
@@ -141,7 +152,7 @@ public class LocalResConfigMgr : SingletonBase<LocalResConfigMgr>
         {
             if (localTableResConfig == null)
             {
-                Debugger.LogError("本地游戏资源配置数据异常!");
+                Debug.LogError("本地游戏资源配置数据异常!");
                 return null;
             }
 
@@ -162,7 +173,7 @@ public class LocalResConfigMgr : SingletonBase<LocalResConfigMgr>
     {
         if (localTableResConfig == null)
         {
-            Debugger.LogError("本地游戏资源配置数据异常!");
+            Debug.LogError("本地游戏资源配置数据异常!");
             return null;
         }
 
