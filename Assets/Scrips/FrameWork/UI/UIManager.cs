@@ -2,7 +2,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using LuaInterface;
 
 public class UIWindowID
 {
@@ -90,11 +89,23 @@ public class UIManager : MonoSingleton<UIManager>
 	}
 	protected CompareBaseWindow compareWindowFun = new CompareBaseWindow();
 
+    protected override void Init()
+    {
+        // 初始化ui windows资源定义        
+        ResourceDefine resDefine = MLResourceManager.Instance.ResourceDefine;
+        if (resDefine == null)
+        {
+            return;
+        }
+
+        resDefine.InitUIWindows();
+    }
+
 	void Awake()
 	{
 		if (uiRoot == null)
 		{
-			Debugger.LogError("UI Root must not be null!!!!");
+			Debug.LogError("UI Root must not be null!!!!");
 			return;
 		}
 
@@ -168,7 +179,7 @@ public class UIManager : MonoSingleton<UIManager>
 		// 检测控制权限
 		if (!IsRegisterWindow(id))
 		{
-			Debugger.Log("UIManager has no control power of " + id.ToString());
+			Debug.Log("UIManager has no control power of " + id.ToString());
 			return;
 		}
 
@@ -216,7 +227,7 @@ public class UIManager : MonoSingleton<UIManager>
 			if (lastShownWindow != null && lastShownWindow != curShownWindow && !windowData.forceClearNavigation)
                 curShownWindow.PreWindowID = lastShownWindow.WindowID;
 
-			Debugger.Log("<color=magenta>### current Navigation window </color>" + baseWindow.WindowID.ToString());
+			Debug.Log("<color=magenta>### current Navigation window </color>" + baseWindow.WindowID.ToString());
 		}
 	}
 
@@ -225,7 +236,7 @@ public class UIManager : MonoSingleton<UIManager>
 		// 检测控制权限
 		if (!IsRegisterWindow(id))
 		{
-			Debugger.Log("UIManager has no control power of " + id.ToString());
+			Debug.Log("UIManager has no control power of " + id.ToString());
 			return null;
 		}
 
@@ -255,7 +266,7 @@ public class UIManager : MonoSingleton<UIManager>
 				// 检查窗口id
 				if (baseWindow.WindowID != id)
 				{
-					Debugger.LogError(string.Format("<color=cyan>[BaseWindowId :{0} != shownWindowId :{1}]</color>", 
+					Debug.LogError(string.Format("<color=cyan>[BaseWindowId :{0} != shownWindowId :{1}]</color>", 
                         baseWindow.WindowID, id));
 
 					return null;
@@ -273,7 +284,7 @@ public class UIManager : MonoSingleton<UIManager>
 
 		if (baseWindow == null)
 		{
-			Debugger.LogError("[window instance is null.]" + id.ToString());
+			Debug.LogError("[window instance is null.]" + id.ToString());
 			return null;
 		}
 
@@ -311,7 +322,7 @@ public class UIManager : MonoSingleton<UIManager>
 		if (baseWindow.windowData.forceClearNavigation 
 			|| (showData != null && showData.Value.forceClearBackSeqData))
 		{
-			Debugger.Log("<color=cyan>## [Enter the start window, reset the backSequenceData for the navigation system.]##</color>");
+			Debug.Log("<color=cyan>## [Enter the start window, reset the backSequenceData for the navigation system.]##</color>");
 			ClearBackSequence();
 		}
 		else
@@ -381,7 +392,7 @@ public class UIManager : MonoSingleton<UIManager>
         backData.hideTargetWindow = targetWindow;
         backData.backShowTargets = navHiddenWindows;
         backSequence.Push(backData);
-        Debugger.Log("<color=cyan>### !!!Push new Navigation data!!! ###</color>");
+        Debug.Log("<color=cyan>### !!!Push new Navigation data!!! ###</color>");
     }
 
     private void DestoryOtherWindow(UIWindowBase targetWindow)
@@ -417,7 +428,7 @@ public class UIManager : MonoSingleton<UIManager>
             StartCoroutine(DestoryOtherWindowCor());
         }
 
-        Debugger.Log("<color=red>## [Destory Other Window, reset the backSequenceData for the navigation system.]##</color>");
+        Debug.Log("<color=red>## [Destory Other Window, reset the backSequenceData for the navigation system.]##</color>");
     }
 
     private IEnumerator DestoryOtherWindowCor()
@@ -444,15 +455,15 @@ public class UIManager : MonoSingleton<UIManager>
 				{
 					if (backData.hideTargetWindow.WindowID != baseWindow.WindowID)
 					{
-						Debugger.Log("<color=cyan>## UICenterMasterManager : clear sequence data ##</color>");
-						Debugger.Log("## UICenterMasterManager : Hide target window and show window id is " 
+						Debug.Log("<color=cyan>## UICenterMasterManager : clear sequence data ##</color>");
+						Debug.Log("## UICenterMasterManager : Hide target window and show window id is " 
 							+ backData.hideTargetWindow.WindowID + " != " + baseWindow.WindowID);
 
 						ClearBackSequence();
 					}
 				}
 				else
-					Debugger.LogError("Back data hide target window is null!");
+					Debug.LogError("Back data hide target window is null!");
 			}
 		}
 	}
@@ -482,7 +493,7 @@ public class UIManager : MonoSingleton<UIManager>
                     needDepth = Mathf.Clamp(MonoExtendUtil.GetMaxTargetDepth(uiNormalWindowRoot.gameObject) + 1, NORMAL_WINDOW_DEPTH, int.MaxValue);
                 }
 				
-				//Debugger.Log("[UIWindowType.Normal] maxDepth is " + needDepth);
+				//Debug.Log("[UIWindowType.Normal] maxDepth is " + needDepth);
 			}
 
 			break;
@@ -497,7 +508,7 @@ public class UIManager : MonoSingleton<UIManager>
                     needDepth = Mathf.Clamp(MonoExtendUtil.GetMaxTargetDepth(uiFixedWidowRoot.gameObject) + 1, FIXED_WINDOW_DEPTH, int.MaxValue);    
                 }
 				
-				//Debugger.Log("[UIWindowType.Fixed] max depth is " + needDepth);
+				//Debug.Log("[UIWindowType.Fixed] max depth is " + needDepth);
 			}
 			break;
 		case UIWindowType.PopUp:
@@ -510,7 +521,7 @@ public class UIManager : MonoSingleton<UIManager>
                 {
                     needDepth = Mathf.Clamp(MonoExtendUtil.GetMaxTargetDepth(uiPopUpWindowRoot.gameObject) + 1, POPUP_WINDOW_DEPTH, int.MaxValue);
                 }
-				//Debugger.Log("[UIWindowType.PopUp] maxDepth is " + needDepth);
+				//Debug.Log("[UIWindowType.PopUp] maxDepth is " + needDepth);
 			}
 			break;
 		}
@@ -527,7 +538,7 @@ public class UIManager : MonoSingleton<UIManager>
 	{
 		if (!IsRegisterWindow(windowId))
 		{
-			Debugger.LogError("## Current UI Manager has no control power of " + windowId.ToString());
+			Debug.LogError("## Current UI Manager has no control power of " + windowId.ToString());
 			return;
 		}
 
@@ -542,7 +553,7 @@ public class UIManager : MonoSingleton<UIManager>
 			if (seqData != null && seqData.hideTargetWindow == window)
 			{
 				ReturnWindow();
-				Debugger.Log("<color=magenta>## close window use PopNavigationWindow() ##</color>");
+				Debug.Log("<color=magenta>## close window use PopNavigationWindow() ##</color>");
 				return;
 			}
 		}
@@ -555,14 +566,14 @@ public class UIManager : MonoSingleton<UIManager>
             int preWindowId = window.PreWindowID;
             if (preWindowId == UIWindowID.WINDOWID_INVAILD)
             {
-                Debugger.LogWarning("## CurrentShownWindow " + window.WindowID + " preWindowId is " + UIWindowID.WINDOWID_INVAILD);
+                Debug.LogWarning("## CurrentShownWindow " + window.WindowID + " preWindowId is " + UIWindowID.WINDOWID_INVAILD);
                 return;
             }
 
             ShowWindow(preWindowId, null);
         });
 
-		Debugger.Log("<color=magenta>## close window without PopNavigationWindow() ##</color>");
+		Debug.Log("<color=magenta>## close window without PopNavigationWindow() ##</color>");
 	}
 
 	public void CloseAllWindow()
@@ -690,11 +701,11 @@ public class UIManager : MonoSingleton<UIManager>
 			int preWindowId = curShownWindow.PreWindowID;
 			if (preWindowId == UIWindowID.WINDOWID_INVAILD)
 			{
-				Debugger.LogWarning("## CurrentShownWindow " + curShownWindow.WindowID + " preWindowId is " + UIWindowID.WINDOWID_INVAILD);
+				Debug.LogWarning("## CurrentShownWindow " + curShownWindow.WindowID + " preWindowId is " + UIWindowID.WINDOWID_INVAILD);
 				return false;
 			}
 
-			Debugger.LogWarning(string.Format("## Current nav window {0} need show pre window {1}.", 
+			Debug.LogWarning(string.Format("## Current nav window {0} need show pre window {1}.", 
 				curShownWindow.WindowID.ToString(), preWindowId.ToString()));
 
 			ShowWindowForBack(preWindowId);
@@ -717,7 +728,7 @@ public class UIManager : MonoSingleton<UIManager>
 						ShowWindowForBack(backId);
 						if (i == backData.backShowTargets.Count - 1)
 						{
-							Debugger.Log("change currentShownNormalWindow : " + backId);
+							Debug.Log("change currentShownNormalWindow : " + backId);
 
 							// 改变当前活跃Normal窗口
 							this.lastShownWindow = this.curShownWindow;

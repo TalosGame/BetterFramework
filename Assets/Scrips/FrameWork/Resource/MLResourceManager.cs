@@ -55,34 +55,61 @@ public class MLResourceManager : DDOLSingleton<MLResourceManager>
     }
 
     // 资源定义
-    private ResourceDefine resourceDefine;
+    protected ResourceDefine resourceDefine;
     public ResourceDefine ResourceDefine
     {
         get { return resourceDefine; }
     }
 
     // 根据资源管理类型初始化
-	public void CreateResourceMgr(ResourceDefine resDefine)
+    //public void CreateResourceMgr(ResourceDefine resDefine)
+    //  {
+    //resourceDefine = resDefine;
+    //    resourceDefine.Init();
+
+    //    foreach (ResManagerType type in Enum.GetValues(typeof(ResManagerType)))
+    //    {
+    //        ResManagerBase resManager = null;
+    //        switch (type)
+    //        {
+    //            case ResManagerType.resourceMgr:
+    //                resManager = new ResourcesManager();
+    //                break;
+    //            case ResManagerType.assetBundleMgr:
+    //                resManager = new AssetBundleManager();
+    //                break;
+    //        }
+
+    //        resManager.Init(resourceDefine);
+    //        resManagers.Add(type, resManager);
+    //    }
+    //}
+
+    public void InitResourceDefine(ResourceDefine resDefine)
     {
 		resourceDefine = resDefine;
-        resourceDefine.Init();
+        resourceDefine.InitResPaths();
+    }
 
-        foreach (ResManagerType type in Enum.GetValues(typeof(ResManagerType)))
+    public void CreateResourceMgr(ResManagerBase resManager)
+    {
+        if(resourceDefine == null)
         {
-            ResManagerBase resManager = null;
-            switch (type)
-            {
-                case ResManagerType.resourceMgr:
-                    resManager = new ResourcesManager();
-                    break;
-                case ResManagerType.assetBundleMgr:
-                    resManager = new AssetBundleManager();
-                    break;
-            }
-
-            resManager.Init(resourceDefine);
-            resManagers.Add(type, resManager);
+            Debug.LogError("Resource define must init first!");
+            return;
         }
+
+        ResManagerType type = resManager.ManagerType();
+        if(resManagers.ContainsKey(type))
+        {
+            Debug.LogError("Resource manager already exist! type:" + type.ToString());
+            return;
+        }
+
+        this.resMgrType = type;
+
+		resManager.Init(resourceDefine);
+		resManagers.Add(type, resManager);
     }
 
     public void ChangeResourceMgr(ResManagerType type)

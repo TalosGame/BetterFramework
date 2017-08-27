@@ -22,20 +22,6 @@ public class LocalResConfigMgr : SingletonBase<LocalResConfigMgr>
         set { productId = value; }
     }
 
-    private ABAssetData abAssetData;
-
-    protected override void Init()
-    {
-        ABAssetDataBase abDataBase = ABAssetDataMgr.Instance.AbAssetData;
-        if(abDataBase == null)
-        {
-            Debug.LogError("AB Asset data is null!");
-            return;
-        }
-
-        abAssetData = abDataBase as ABAssetData;
-    }
-
     #region 读取本地资源配置
     /// <summary>
     /// 读取本地资源配置数据
@@ -91,7 +77,7 @@ public class LocalResConfigMgr : SingletonBase<LocalResConfigMgr>
         }
 
         // 加载大厅AB文件信息
-        abAssetData.LoadLobbyAssetInfo(LocalTableResConfig);
+        ABAssetDataMgr.Instance.LoadLobbyAssetInfo(LocalTableResConfig);
     }
 
     /// <summary>
@@ -102,7 +88,7 @@ public class LocalResConfigMgr : SingletonBase<LocalResConfigMgr>
     {
         LocalTableResConfig.lobbyResConfig = lobbyResConfig;
 
-        abAssetData.SyncLobbyAssetInfo(LocalTableResConfig);
+        ABAssetDataMgr.Instance.SyncLobbyAssetInfo(LocalTableResConfig);
 
         string xmlPath = PathConfiger.GetSandboxFilePath(TableGameRes.FILE_NAME);
         XMLSerializer.Save<TableGameRes>(xmlPath, LocalTableResConfig);
@@ -110,7 +96,7 @@ public class LocalResConfigMgr : SingletonBase<LocalResConfigMgr>
 
     public void LoadGameResConfig(int productId)
     {
-        abAssetData.LoadGameAssetsInfo(LocalTableResConfig, productId);
+        ABAssetDataMgr.Instance.LoadGameAssetsInfo(LocalTableResConfig, productId);
     }
 
     /// <summary>
@@ -124,7 +110,7 @@ public class LocalResConfigMgr : SingletonBase<LocalResConfigMgr>
 
         LocalTableResConfig.gameResConfig.RebuildGameRes(newGameRes, productId);
 
-        abAssetData.SyncGameAssetInfo(LocalTableResConfig, productId);
+        ABAssetDataMgr.Instance.SyncGameAssetInfo(LocalTableResConfig, productId);
 
         string xmlPath = PathConfiger.GetSandboxFilePath(TableGameRes.FILE_NAME);
         XMLSerializer.Save<TableGameRes>(xmlPath, LocalTableResConfig);

@@ -533,11 +533,10 @@ public class HotUpdateMgr : DDOLSingleton<HotUpdateMgr>
     /// <param name="datas"></param>
     private void ComparisonFiles(List<ResData> datas, int productId)
     {
-        ABAssetData assetData = ABAssetDataMgr.Instance.AbAssetData as ABAssetData;
         foreach (ResData sData in datas)
         {
             string abName = sData.name;
-            ResData luaData = assetData.FindResData(abName, productId:productId);
+            ResData luaData = ABAssetDataMgr.Instance.FindResData(abName, productId:productId);
             if (luaData != null && sData.md5 == luaData.md5)
                 continue;
 

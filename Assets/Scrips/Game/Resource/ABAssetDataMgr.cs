@@ -59,7 +59,7 @@ public class GameAbAssets
 /// <summary>
 /// AB资源信息数据管理器
 /// </summary>
-public class ABAssetData : ABAssetDataBase
+public class ABAssetDataMgr : SingletonBase<ABAssetDataMgr>
 {
     private Dictionary<string, ResData> luaAssetsInfo = new Dictionary<string, ResData>();
     private Dictionary<string, ResData> lobbyAssetsInfo = new Dictionary<string, ResData>();
@@ -178,7 +178,7 @@ public class ABAssetData : ABAssetDataBase
         }
     }
 
-    public override ResData FindResData(string name, int resType = -1)
+    public ResData FindResData(string name, int resType = -1)
     {
         return FindResData(name, CurrentProductId, resType);
     }

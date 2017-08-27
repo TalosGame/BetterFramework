@@ -51,6 +51,16 @@ public class ResourceInfo
     public string Name { get; set; }
 
     /// <summary>
+    /// 资源路径
+    /// </summary>
+    public string Path { get; set; }
+
+    /// <summary>
+    /// 依赖的资源
+    /// </summary>
+    public List<string> Dependencies { get; set; }
+
+    /// <summary>
     /// 引用个数
     /// </summary>
     public int RefCount { get; set; }
@@ -60,7 +70,7 @@ public class ResourceInfo
     /// </summary>
     public bool isPermanent { get; set; }
 
-	public ResourceInfo()
+    public ResourceInfo()
 	{
 
     }
@@ -77,6 +87,8 @@ public abstract class ResManagerBase
     protected Dictionary<string, ResourceInfo> resourceDic;
 
     protected ResourceDefine resourceDefine;
+
+    public abstract ResManagerType ManagerType();
 
     public virtual void Init(ResourceDefine resourceDefine)
     {
@@ -158,45 +170,7 @@ public abstract class ResManagerBase
     public abstract IEnumerator LoadAsync(ResourceInfo info, Action<UnityEngine.Object> load, Action<float> progress);
     #endregion
 
-    /// <summary>
-    /// 获取资源信息
-    /// </summary>
-    /// <param name="name">资源名称</param>
-    /// <param name="type">资源类型</param>
-    /// <returns></returns>
-    public ResourceInfo GetResourceInfo(string name, int type, bool isPermanent)
-    {
-        if (string.IsNullOrEmpty(name))
-        {
-            Debug.LogError("Asset path is null or Empty!!!");
-            return null;
-        }
-
-        ResourceInfo resourceInfo = null;
-        if (!resourceDic.TryGetValue(name, out resourceInfo))
-        {
-            resourceInfo = new ResourceInfo();
-            resourceInfo.Name = name;
-            resourceInfo.ResType = type;
-            resourceInfo.isPermanent = isPermanent;
-            resourceDic.Add(name, resourceInfo);
-        }
-
-        resourceInfo.RefCount++;
-        return resourceInfo;
-    }
-
-    public ResourceInfo GetLoadedResource(string name)
-    {
-        ResourceInfo resourceInfo = null;
-        if (!resourceDic.TryGetValue(name, out resourceInfo))
-        {
-            return null;
-        }
-
-        return resourceInfo;
-    }
-
+    #region 释放资源
     public void UnloadResource(string name, bool unloadObject = false)
     {
         ResourceInfo resInfo = GetLoadedResource(name);
@@ -205,7 +179,7 @@ public abstract class ResManagerBase
 
         if (!resInfo.isPermanent)
         {
-            UnloadResource(resInfo, unloadObject:unloadObject);
+            UnloadResource(resInfo, unloadObject: unloadObject);
         }
 
         // 如果不是释放已加载的资源，资源缓存不需要清空
@@ -271,11 +245,71 @@ public abstract class ResManagerBase
 
     public virtual void UnloadResource(ResourceInfo info, bool unloadObject = false)
     {
-        
+
     }
 
     public virtual void UnloadAllResource(ResourceInfo info, bool unloadObject = false)
-    { 
-    
+    {
+
     }
+    #endregion
+
+    #region 资源信息
+    /// <summary>
+    /// 获取资源信息
+    /// </summary>
+    /// <param name="name">资源名称</param>
+    /// <param name="type">资源类型</param>
+    /// <returns></returns>
+    public ResourceInfo GetResourceInfo(string name, int type, bool isPermanent)
+    {
+        if (string.IsNullOrEmpty(name))
+        {
+            Debug.LogError("Asset path is null or Empty!!!");
+            return null;
+        }
+
+        ResourceInfo resourceInfo = null;
+        if (!resourceDic.TryGetValue(name, out resourceInfo))
+        {
+            resourceInfo = CreateResourceInfo(name, type);
+            resourceInfo.isPermanent = isPermanent;
+
+            resourceDic.Add(name, resourceInfo);
+        }
+
+        resourceInfo.RefCount++;
+        return resourceInfo;
+    }
+
+    /// <summary>
+    /// 创建资源信息
+    /// </summary>
+    /// <param name="name">资源名称.</param>
+    /// <param name="type">资源类型.</param>
+    protected virtual ResourceInfo CreateResourceInfo(string name, int type)
+    {
+        ResourceInfo ret = new ResourceInfo();
+        ret.Name = name;
+        ret.ResType = type;
+        ret.Path = resourceDefine.GetResourcePath(type, name);
+
+        return ret;
+    }
+
+	/// <summary>
+	/// 获取资源信息
+	/// </summary>
+	/// <param name="name">资源名称</param>
+	public ResourceInfo GetLoadedResource(string name)
+    {
+        ResourceInfo resourceInfo = null;
+        if (!resourceDic.TryGetValue(name, out resourceInfo))
+        {
+            return null;
+        }
+
+        return resourceInfo;
+    }
+    #endregion
 }

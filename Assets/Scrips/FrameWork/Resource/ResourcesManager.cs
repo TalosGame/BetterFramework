@@ -4,16 +4,21 @@ using System.Collections;
 
 public class ResourcesManager : ResManagerBase
 {
+    public override ResManagerType ManagerType()
+    {
+        return ResManagerType.resourceMgr;
+    }
+
     protected override UnityEngine.Object Load(ResourceInfo info)
     {
-        UnityEngine.Object resObj = Resources.Load(resourceDefine.GetResourcePath(info.ResType, info.Name));
+        UnityEngine.Object resObj = Resources.Load(info.Path);
         info._assetObj = resObj;
         return resObj;
     }
 
     public override IEnumerator LoadAsync(ResourceInfo info, Action<UnityEngine.Object> load, Action<float> progress)
     {
-        ResourceRequest rr = Resources.LoadAsync(resourceDefine.GetResourcePath(info.ResType, info.Name));
+        ResourceRequest rr = Resources.LoadAsync(info.Path);
         while (!rr.isDone)
         {
             if (progress != null)

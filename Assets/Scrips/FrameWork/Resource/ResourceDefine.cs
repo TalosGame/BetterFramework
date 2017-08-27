@@ -41,7 +41,7 @@ public abstract class ResourceType
     public const int RES_LUA = RES_AUDIO + 1;           // lua资源
 }
 
-public class ResourceDefine
+public abstract class ResourceDefine
 {
 	// 窗口预设id和预设名字典
 	private Dictionary<int, string> windowPrefabNames = new Dictionary<int, string>();
@@ -49,13 +49,15 @@ public class ResourceDefine
 	// 资源
 	private Dictionary<int, string> resourcePath = new Dictionary<int, string>();
 
-	/// <summary>
-	/// 初始资源定义
-	/// </summary>
-	public virtual void Init()
-	{
+    /// <summary>
+    /// 初始化窗口资源
+    /// </summary>
+    public abstract void InitUIWindows();
 
-	}
+    /// <summary>
+    /// 初始化资源路径
+    /// </summary>
+    public abstract void InitResPaths();
 
 	protected void RegisterWindow(int windowId)
 	{

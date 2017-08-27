@@ -21,33 +21,38 @@ public class LoadedAssetBundle
     }
 }
 
-public class AssetBundleManager : ResManagerBase
+public abstract class AssetBundleManager : ResManagerBase
 {
     private Dictionary<string, LoadedAssetBundle> loadedAssetBundles = new Dictionary<string, LoadedAssetBundle>();
+
+    public override ResManagerType ManagerType()
+    {
+        return ResManagerType.assetBundleMgr;
+    }
 
     #region asset bundle 同步加载
     protected override UnityEngine.Object Load(ResourceInfo info)
     {
-        ResData bundleData = GetBundleRes(info.Name, info.ResType);
-        if (bundleData == null)
-        {
-            Debug.LogError("Get bundle data error! AB name:" + info.Name);
-            return null;
-        }
+        //ResData bundleData = GetBundleRes(info.Name, info.ResType);
+        //if (bundleData == null)
+        //{
+        //    Debug.LogError("Get bundle data error! AB name:" + info.Name);
+        //    return null;
+        //}
 
-        AssetBundle assetBundle = GetCacheAssetBundle(bundleData.name);
+        AssetBundle assetBundle = GetCacheAssetBundle(info.Name);
         if (assetBundle != null)
         {
-            return assetBundle.LoadAsset(bundleData.name);
+            return assetBundle.LoadAsset(info.Name);
         }
 
-        assetBundle = LoadSyncAssetBundle(bundleData);
+        assetBundle = LoadSyncAssetBundle(info);
         if(assetBundle == null)
         {
             return null;
         }
 
-        UnityEngine.Object assetObj = assetBundle.LoadAsset(bundleData.name);
+        UnityEngine.Object assetObj = assetBundle.LoadAsset(info.Name);
         if (assetObj == null)
         {
             return null;
@@ -57,15 +62,15 @@ public class AssetBundleManager : ResManagerBase
         return assetObj;
     }
 
-    private AssetBundle LoadSyncAssetBundle(ResData data)
+    private AssetBundle LoadSyncAssetBundle(ResourceInfo info)
     {
-        LoadSyncDependencies(data);
-        return LoadAssetBundle(data);
+        LoadSyncDependencies(info);
+        return LoadAssetBundle(info);
     }
 
-    private void LoadSyncDependencies(ResData data)
+    private void LoadSyncDependencies(ResourceInfo info)
     {
-        List<string> dependencies = data.dependencies;
+        List<string> dependencies = info.Dependencies;
         foreach (string dependence in dependencies)
         {
             AssetBundle assetBundle = GetCacheAssetBundle(dependence);
@@ -74,7 +79,7 @@ public class AssetBundleManager : ResManagerBase
                 continue;
             }
 
-            ResData depData = GetBundleResDirect(dependence);
+            ResourceInfo depData = GetDependResourceInfo(dependence);
             if (depData == null)
             {
                 Debug.LogError("Find dependend bundle error! name:" + dependence);
@@ -85,9 +90,14 @@ public class AssetBundleManager : ResManagerBase
         }
     }
 
-    private AssetBundle LoadAssetBundle(ResData data)
+	protected virtual ResourceInfo GetDependResourceInfo(string name)
+	{
+		return null;
+	}
+
+    private AssetBundle LoadAssetBundle(ResourceInfo info)
     {
-        string path = PathConfiger.GetABFilePath(data.bundleName);
+        string path = PathConfiger.GetABFilePath(info.Path);
         if (path == string.Empty || path == "")
         {
             Debug.LogError("load sync asset bundle error! path===" + path);
@@ -101,7 +111,7 @@ public class AssetBundleManager : ResManagerBase
             return null;
         }
 
-        loadedAssetBundles.Add(data.name, new LoadedAssetBundle(data.name, assetbundle));
+        loadedAssetBundles.Add(info.Name, new LoadedAssetBundle(info.Name, assetbundle));
         return assetbundle;
     }
     #endregion
@@ -109,20 +119,20 @@ public class AssetBundleManager : ResManagerBase
     #region 仅仅加载Bundle
     protected override void LoadBundle(ResourceInfo info)
     {
-        ResData bundleData = GetBundleRes(info.Name, info.ResType);
-        if (bundleData == null)
-        {
-            Debug.LogError("Get bundle data error!");
-            return;
-        }
+        //ResData bundleData = GetBundleRes(info.Name, info.ResType);
+        //if (bundleData == null)
+        //{
+        //    Debug.LogError("Get bundle data error!");
+        //    return;
+        //}
 
-        AssetBundle assetBundle = GetCacheAssetBundle(bundleData.name);
+        AssetBundle assetBundle = GetCacheAssetBundle(info.Name);
         if (assetBundle != null)
         {
             return;
         }
 
-        LoadSyncAssetBundle(bundleData);
+        LoadSyncAssetBundle(info);
     }
     #endregion
 
@@ -293,17 +303,14 @@ public class AssetBundleManager : ResManagerBase
 
     private void UnloadDependencies(ResourceInfo info, bool unloadObject)
     {
-        ResData resData = GetBundleRes(info.Name, info.ResType);
-        if (resData == null)
-            return;
-
         // Loop dependencies.
-        List<string> dependencies = resData.dependencies;
-        foreach (var dependency in dependencies)
+        foreach (var dependency in info.Dependencies)
         {
             LoadedAssetBundle bundle = null;
             if (!loadedAssetBundles.TryGetValue(dependency, out bundle))
+            {
                 continue;
+            }
 
             UnloadAssetBundle(bundle, unloadObject);
         }
@@ -322,15 +329,19 @@ public class AssetBundleManager : ResManagerBase
     #endregion
 
     #region 公用功能模块
-    private ResData GetBundleRes(string name, int type)
-    {
-        return ABAssetDataMgr.Instance.FindResData(name, type);
-    }
+    //public abstract ResData GetBundleRes(string name, int type);
 
-    private ResData GetBundleResDirect(string name)
-    {
-        return ABAssetDataMgr.Instance.FindResData(name);
-    }
+    //public abstract ResData GetBundleResDirect(string name);
+
+    //private ResData GetBundleRes(string name, int type)
+    //{
+    //    return ABAssetDataMgr.Instance.FindResData(name, type);
+    //}
+
+    //private ResData GetBundleResDirect(string name)
+    //{
+    //    return ABAssetDataMgr.Instance.FindResData(name);
+    //}
 
     private AssetBundle GetCacheAssetBundle(string name)
     {
@@ -346,13 +357,6 @@ public class AssetBundleManager : ResManagerBase
 
     private LoadedAssetBundle GetLoadedAssetBundle(ResourceInfo info)
     {
-        ResData bundleData = GetBundleRes(info.Name, info.ResType);
-        if (bundleData == null)
-        {
-            Debug.LogError("Get bundle data error!");
-            return null;
-        }
-
         LoadedAssetBundle bundle = null;
         if (loadedAssetBundles.TryGetValue(info.Name, out bundle))
         {

@@ -18,24 +18,29 @@ public class GameWindowID : UIWindowID
 /// </summary>
 public class GameResourceType : ResourceType
 {
-    
+    public const int RES_LEVEL_OBJECTS = RES_LUA + 1;           // 场景对象
+
 }
 
 public class GameResDefine : ResourceDefine
 {
-    public override void Init()
+    public override void InitUIWindows()
     {
-        // 注册窗口ID
-        RegisterWindow(UIWindowID.WINDOWID_HOT_RES_LOADING);
+		//注册窗口ID
+		RegisterWindow(UIWindowID.WINDOWID_HOT_RES_LOADING);
 
-        // 注册窗口资源路径
-        AddExUIWindow(UIWindowID.WINDOWID_HOT_RES_LOADING, "NormalWindow/UIHotUpLoading");
+		// 注册窗口资源路径
+		AddExUIWindow(UIWindowID.WINDOWID_HOT_RES_LOADING, "NormalWindow/UIHotUpLoading");
+	}
 
-        // 添加资源搜索路径
-        AddExResourcePath(ResourceType.RES_UI, "UI");
-        AddExResourcePath(ResourceType.RES_DATAS, "Datas");
-        AddExResourcePath(ResourceType.RES_AUDIO, "Sounds");
-        AddExResourcePath(ResourceType.RES_LUA, "lua");
-    }
+    public override void InitResPaths()
+    {
+		// 添加资源搜索路径
+		AddExResourcePath(ResourceType.RES_UI, "UI");
+		AddExResourcePath(ResourceType.RES_DATAS, "Datas");
+		AddExResourcePath(ResourceType.RES_AUDIO, "Sounds");
+		AddExResourcePath(ResourceType.RES_LUA, "lua");
+		AddExResourcePath(GameResourceType.RES_LEVEL_OBJECTS, "LevelObjs");
+	}
 }
 
