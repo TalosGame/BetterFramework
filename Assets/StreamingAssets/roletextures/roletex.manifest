@@ -1,0 +1,29 @@
+ManifestFileVersion: 0
+CRC: 3039995434
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: a25aa8a8560110de9191d737e4c2b5f8
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 8c82af9f276b27ec2a396fecb7931109
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 212
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+Assets:
+- Assets/Art/Resources/RoleTextures/RoleTex.prefab
+- Assets/Art/Sprites/role.png
+Dependencies: []
