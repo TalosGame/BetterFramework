@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: e43313aa5fd244a4fb040182c71e9e82
-timeCreated: 1503934169
+guid: 88b40e7018751407996bbff0c2873593
+timeCreated: 1503844329
 licenseType: Pro
 TextureImporter:
   fileIDToRecycleName: {}
@@ -64,5 +64,5 @@ TextureImporter:
     outline: []
   spritePackingTag: 
   userData: 
-  assetBundleName: roletextures/roletex
+  assetBundleName: 
   assetBundleVariant: 
