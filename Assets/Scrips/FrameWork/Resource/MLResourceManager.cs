@@ -61,30 +61,6 @@ public class MLResourceManager : DDOLSingleton<MLResourceManager>
         get { return resourceDefine; }
     }
 
-    // 根据资源管理类型初始化
-    //public void CreateResourceMgr(ResourceDefine resDefine)
-    //  {
-    //resourceDefine = resDefine;
-    //    resourceDefine.Init();
-
-    //    foreach (ResManagerType type in Enum.GetValues(typeof(ResManagerType)))
-    //    {
-    //        ResManagerBase resManager = null;
-    //        switch (type)
-    //        {
-    //            case ResManagerType.resourceMgr:
-    //                resManager = new ResourcesManager();
-    //                break;
-    //            case ResManagerType.assetBundleMgr:
-    //                resManager = new AssetBundleManager();
-    //                break;
-    //        }
-
-    //        resManager.Init(resourceDefine);
-    //        resManagers.Add(type, resManager);
-    //    }
-    //}
-
     public void InitResourceDefine(ResourceDefine resDefine)
     {
 		resourceDefine = resDefine;
@@ -143,24 +119,6 @@ public class MLResourceManager : DDOLSingleton<MLResourceManager>
         return resManager.GetLoadedResource(name);
     }
 
-    /// <summary>
-    /// 获取资源名称
-    /// 如果是AssetBundle资源， 资源名称需要都是小写
-    /// </summary>
-    /// <param name="name"></param>
-    /// <returns></returns>
-    private string GetResName(string name)
-    {
-        if(resMgrType == ResManagerType.assetBundleMgr)
-        {
-            int stIdx = name.LastIndexOf("/");
-            stIdx = stIdx < 0 ? 0 : stIdx + 1;
-            return name.Substring(stIdx, name.Length - stIdx).ToLower();
-        }
-
-        return name;
-    }
-
     #region 同步克隆&实例
     /// <summary>
     /// 同步加载并克隆生成对象
@@ -187,7 +145,7 @@ public class MLResourceManager : DDOLSingleton<MLResourceManager>
     public T LoadInstance<T>(string name, int type = ResourceType.RES_UI, 
         bool unloadObject = false, bool isPermanent = false) where T : Component
     {
-        GameObject obj = LoadInstance(GetResName(name), type, unloadObject, isPermanent) as GameObject;
+        GameObject obj = LoadInstance(name, type, unloadObject, isPermanent) as GameObject;
         if(obj == null)
         {
             return null;
@@ -241,13 +199,12 @@ public class MLResourceManager : DDOLSingleton<MLResourceManager>
     public UnityEngine.Object LoadInstance(string name, GameObject parent, int type = ResourceType.RES_UI, 
         bool unloadObject = false, bool isPermanent = false)
     {
-        string resName = GetResName(name);
-
-        UnityEngine.Object prefabObj = LoadResource(resName, type, isPermanent);
+        UnityEngine.Object prefabObj = LoadResource(name, type, isPermanent);
 
         GameObject ret = MonoExtendUtil.CreateChild(parent, prefabObj as GameObject);
 
-        StartCoroutine(UnloadResourceCoroutine(resName, unloadObject));
+        StartCoroutine(UnloadResourceCoroutine(name, unloadObject));
+
         return ret;
     }
     #endregion
@@ -274,7 +231,7 @@ public class MLResourceManager : DDOLSingleton<MLResourceManager>
     public void LoadAsyncInstance<T>(string name, GameObject parent, Action<T> load, Action<float> progress,
         int type = ResourceType.RES_UI, bool unloadObject = false, bool isPermanent = false) where T : Component
     {
-        LoadAsyncInstance(GetResName(name), parent, (_obj) =>
+        LoadAsyncInstance(name, parent, (_obj) =>
         {
             if(_obj == null || load == null)
             {
@@ -297,9 +254,7 @@ public class MLResourceManager : DDOLSingleton<MLResourceManager>
     public void LoadAsyncInstance(string name, GameObject parent, Action<UnityEngine.Object> load, Action<float> progress,
         int type = ResourceType.RES_UI, bool unloadObject = false, bool isPermanent = false)
     {
-        string resName = GetResName(name);
-
-        LoadResourceAsync(resName, (_obj) =>
+        LoadResourceAsync(name, (_obj) =>
         {
             if (_obj == null)
             {
@@ -315,7 +270,7 @@ public class MLResourceManager : DDOLSingleton<MLResourceManager>
                 return;
             }
 
-            UnloadResource(resName, unloadObject);
+            UnloadResource(name, unloadObject);
 
             if (load != null)
                 load(ret);
@@ -339,19 +294,19 @@ public class MLResourceManager : DDOLSingleton<MLResourceManager>
     /// <returns></returns>
     public UnityEngine.Object LoadResource(string name, int type = ResourceType.RES_UI, bool isPermanent = false)
     {
-        return resManager.Load(GetResName(name), type, isPermanent);
+        return resManager.Load(name, type, isPermanent);
     }
 
     public void LoadResourceAsync(string name, Action<UnityEngine.Object> load, int type = ResourceType.RES_UI, 
         bool isPermanent = false)
     {
-        resManager.LoadAsync(GetResName(name), load, null, type, isPermanent);
+        resManager.LoadAsync(name, load, null, type, isPermanent);
     }
 
     public void LoadResourceAsync(string name, Action<UnityEngine.Object> load, Action<float> progress,
         int type = ResourceType.RES_UI, bool isPermanent = false)
     {
-        resManager.LoadAsync(GetResName(name), load, progress, type, isPermanent);
+        resManager.LoadAsync(name, load, progress, type, isPermanent);
     }
     #endregion
 
@@ -367,7 +322,7 @@ public class MLResourceManager : DDOLSingleton<MLResourceManager>
     /// <param name="name">资源名称</param>
     public void UnloadResource(string name, bool unloadObject = false)
     {
-        resManager.UnloadResource(GetResName(name), unloadObject);
+        resManager.UnloadResource(name, unloadObject);
     }
 
     /// <summary>
@@ -377,7 +332,7 @@ public class MLResourceManager : DDOLSingleton<MLResourceManager>
     /// <param name="unloadObject"></param>
     public void UnloadResourceAndDepend(string name, bool unloadObject = false)
     {
-        resManager.UnloadResourceAndDepend(GetResName(name), unloadObject);
+        resManager.UnloadResourceAndDepend(name, unloadObject);
     }
 
     /// <summary>
@@ -391,7 +346,7 @@ public class MLResourceManager : DDOLSingleton<MLResourceManager>
     private IEnumerator UnloadResourceCoroutine(string name, bool unloadObject)
     {
         yield return null;
-        UnloadResource(GetResName(name), unloadObject);
+        UnloadResource(name, unloadObject);
     }
 
     /// <summary>

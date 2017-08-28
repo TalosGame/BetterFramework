@@ -30,16 +30,19 @@ public abstract class AssetBundleManager : ResManagerBase
         return ResManagerType.assetBundleMgr;
     }
 
+    protected override ResourceInfo CreateResourceInfo(string name, int type)
+    {
+		ResourceInfo ret = new ResourceInfo();
+        ret.Name = name.ToLower();
+		ret.ResType = type;
+        ret.Path = resourceDefine.GetResourcePath(type, ret.Name).ToLower();
+
+		return ret;
+    }
+
     #region asset bundle 同步加载
     protected override UnityEngine.Object Load(ResourceInfo info)
     {
-        //ResData bundleData = GetBundleRes(info.Name, info.ResType);
-        //if (bundleData == null)
-        //{
-        //    Debug.LogError("Get bundle data error! AB name:" + info.Name);
-        //    return null;
-        //}
-
         AssetBundle assetBundle = GetCacheAssetBundle(info.Name);
         if (assetBundle != null)
         {
@@ -71,6 +74,11 @@ public abstract class AssetBundleManager : ResManagerBase
     private void LoadSyncDependencies(ResourceInfo info)
     {
         List<string> dependencies = info.Dependencies;
+        if(dependencies == null)
+        {
+            return;    
+        }
+
         foreach (string dependence in dependencies)
         {
             AssetBundle assetBundle = GetCacheAssetBundle(dependence);

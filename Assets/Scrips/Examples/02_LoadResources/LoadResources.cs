@@ -12,7 +12,7 @@ public class LoadResources : MonoBehaviour
 
     void Start () 
     {
-        GameObject carObj = MLResourceManager.Instance.LoadInstance("RoleTex", GameResourceType.RES_ROLE_TEXTURES) as GameObject;
-        carObj.transform.localScale = new Vector3(1.3f, 1.3f, 1f);
+        GameObject roleTexObj = MLResourceManager.Instance.LoadInstance("RoleTex", GameResourceType.RES_ROLE_TEXTURES) as GameObject;
+        roleTexObj.transform.localScale = new Vector3(1.3f, 1.3f, 1f);
 	}
 }
