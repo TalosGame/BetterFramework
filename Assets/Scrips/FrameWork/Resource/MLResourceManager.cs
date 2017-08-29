@@ -204,7 +204,6 @@ public class MLResourceManager : DDOLSingleton<MLResourceManager>
         GameObject ret = MonoExtendUtil.CreateChild(parent, prefabObj as GameObject);
 
         StartCoroutine(UnloadResourceCoroutine(name, unloadObject));
-
         return ret;
     }
     #endregion
