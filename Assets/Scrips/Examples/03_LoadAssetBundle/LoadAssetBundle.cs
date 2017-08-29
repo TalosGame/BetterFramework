@@ -54,7 +54,7 @@ public class LoadAssetBundle : MonoBehaviour
 		{
 			roleObj = obj as GameObject;
 			roleObj.transform.localScale = new Vector3(1.5f, 1.5f, 1f);
-		}, GameResourceType.RES_ROLE_TEXTURES);
+		}, GameResourceType.RES_ROLE);
 	}
 
 	private IEnumerator CleanRoleTexCor(Action action)
@@ -64,6 +64,8 @@ public class LoadAssetBundle : MonoBehaviour
 			yield break;
 		}
 
+        MLResourceManager.Instance.UnloadResource("TerryRole", true);
+
 		if (roleObj == null)
 		{
 			action();
@@ -72,6 +74,7 @@ public class LoadAssetBundle : MonoBehaviour
 
 		Destroy(roleObj);
 		roleObj = null;
+
 		yield return new WaitForSeconds(1f);
 
 		action();
