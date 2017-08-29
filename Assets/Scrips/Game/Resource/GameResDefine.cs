@@ -18,8 +18,9 @@ public class GameWindowID : UIWindowID
 /// </summary>
 public class GameResourceType : ResourceType
 {
-	// 人物贴图资源
-	public const int RES_ROLE_TEXTURES = RES_LUA + 1;
+    // 人物贴图资源
+    public const int RES_ROLE = RES_LUA + 1;
+	public const int RES_ROLE_TEXTURES = RES_ROLE + 1;
 }
 
 public class GameResDefine : ResourceDefine
@@ -40,6 +41,8 @@ public class GameResDefine : ResourceDefine
 		AddExResourcePath(ResourceType.RES_DATAS, "Datas");
 		AddExResourcePath(ResourceType.RES_AUDIO, "Sounds");
 		AddExResourcePath(ResourceType.RES_LUA, "lua");
+
+        AddExResourcePath(GameResourceType.RES_ROLE, "Role");
 		AddExResourcePath(GameResourceType.RES_ROLE_TEXTURES, "RoleTextures");
 	}
 }

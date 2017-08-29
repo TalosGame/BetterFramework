@@ -2,7 +2,6 @@
 using System.Collections;
 using UnityEngine;
 
-
 public class LoadResources : MonoBehaviour 
 {
 	private const string LOAD_SYNC_TEXT = "同步加载";
@@ -57,8 +56,6 @@ public class LoadResources : MonoBehaviour
             roleTexObj.transform.localScale = new Vector3(1.3f, 1.3f, 1f);
         }, GameResourceType.RES_ROLE_TEXTURES);
     }
-
-
 
     private IEnumerator CleanRoleTexCor(Action action)
     {

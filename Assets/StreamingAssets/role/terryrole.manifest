@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 805740962
+CRC: 755493103
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: df20084431ac2819398138eb018ba97c
+    Hash: b6375424cecde009ca7be19a85fb5fd7
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 8c82af9f276b27ec2a396fecb7931109
+    Hash: fbc9aa598e08661aa9e7cc61008d97bb
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -19,11 +19,19 @@ ClassTypes:
   Script: {instanceID: 0}
 - Class: 48
   Script: {instanceID: 0}
+- Class: 74
+  Script: {instanceID: 0}
+- Class: 91
+  Script: {instanceID: 0}
+- Class: 95
+  Script: {instanceID: 0}
 - Class: 212
   Script: {instanceID: 0}
 - Class: 213
   Script: {instanceID: 0}
 Assets:
-- Assets/Art/Resources/RoleTextures/RoleTex.prefab
-- Assets/Art/Textures/role.png
+- Assets/Art/Resources/Role/TerryRole.prefab
+- Assets/Art/Animations/Terry/terry_atlas.png
+- Assets/Art/Animations/Terry/IdleAnim.anim
+- Assets/Art/Animations/Terry/terryAnimControl.controller
 Dependencies: []

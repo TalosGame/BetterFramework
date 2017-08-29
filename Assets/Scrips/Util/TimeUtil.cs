@@ -63,4 +63,16 @@ public class TimeUtil
         long ret = (time2.Ticks - time1.Ticks) / TimeSpan.TicksPerMillisecond;
         return ret;
     }
+
+	/// <summary>
+	/// 通过unix时间戳格式化为年-月-日 小时-分
+	/// </summary>
+	/// <param name="unixTimeStamp">unix 时间戳</param>
+	/// <returns></returns>
+	public static string ConvertToTimeString(long unixTimeStamp)
+	{
+		DateTime startTime = TimeZone.CurrentTimeZone.ToLocalTime(Jan1st1970); // 当地时区
+		DateTime dt = startTime.AddSeconds(unixTimeStamp);
+		return dt.ToString("yyyy-MM-dd HH:mm");
+	}
 }

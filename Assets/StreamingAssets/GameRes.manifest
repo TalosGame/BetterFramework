@@ -1,7 +1,10 @@
 ManifestFileVersion: 0
-CRC: 2331139394
+CRC: 2772789626
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
       Name: roletextures/roletex
+      Dependencies: {}
+    Info_1:
+      Name: role/terryrole
       Dependencies: {}
