@@ -14,7 +14,7 @@ public class LoadAssetBundle : MonoBehaviour
     {
 		MLResourceManager resMgr = MLResourceManager.Instance;
 		resMgr.InitResourceDefine(new GameResDefine());
-        resMgr.CreateResourceMgr(new GameABAssetMgr());
+        resMgr.CreateResourceMgr(new AssetBundleManager());
         resMgr.ChangeResourceMgr(ResManagerType.assetBundleMgr);
 
 		btnStyle = new GUIStyle("button");
@@ -64,7 +64,7 @@ public class LoadAssetBundle : MonoBehaviour
 			yield break;
 		}
 
-        MLResourceManager.Instance.UnloadResource("TerryRole", true);
+        MLResourceManager.Instance.UnloadResourceAndDepend("TerryRole", true);
 
 		if (roleObj == null)
 		{

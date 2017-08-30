@@ -116,6 +116,12 @@ public abstract class ResourceDefine
 	/// <returns></returns>
 	public string GetResourcePath(int type, string name)
 	{
+        // 如果ab资源
+        if(type == ResourceType.RES_ASSETBUNDLE)
+        {
+            return name;
+        }
+
 		string ret = string.Empty;
 		if (!resourcePath.TryGetValue(type, out ret))
 		{

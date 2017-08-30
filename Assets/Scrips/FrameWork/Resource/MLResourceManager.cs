@@ -257,7 +257,7 @@ public class MLResourceManager : DDOLSingleton<MLResourceManager>
         {
             if (_obj == null)
             {
-                Debug.LogError("resource load prefab object is null!");
+                Debug.LogError("resource load prefab object is null! name:" + name);
                 return;
             }
 

@@ -1,5 +1,5 @@
 ManifestFileVersion: 0
-CRC: 2772789626
+CRC: 4026935118
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
@@ -7,4 +7,8 @@ AssetBundleManifest:
       Dependencies: {}
     Info_1:
       Name: role/terryrole
+      Dependencies:
+        Dependency_0: atlas/role/terry_atlas
+    Info_2:
+      Name: atlas/role/terry_atlas
       Dependencies: {}

@@ -156,14 +156,14 @@ public enum ValidBuildTarget
 }
 
 /// <summary>
-/// 路径配置表
+/// 资源配置表
 /// </summary>
-public class PathConfiger
+public class ABConfiger
 {
 	/// <summary>
 	/// asset manifset 名称
 	/// </summary>
-	public const string ASSET_MANIFEST_NAME = "AssetBundle";
+	public const string ASSET_MANIFEST_NAME = "GameRes";
 
 	/// <summary>
 	/// bundle后缀名

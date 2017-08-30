@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System;
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -10,20 +11,64 @@ using System.Collections.Generic;
 public class LoadedAssetBundle
 {
     public string name;
+    public bool loadError = false;
     public AssetBundle assetBundle;
     public int referencedCount;
 
     public LoadedAssetBundle(string name, AssetBundle assetBundle)
     {
         this.name = name;
+        this.loadError = false;
         this.assetBundle = assetBundle;
         referencedCount = 1;
     }
+
+    public LoadedAssetBundle(string name, bool loadError, AssetBundle assetBundle)
+    {
+        this.name = name;
+        this.loadError = loadError;
+		this.assetBundle = assetBundle;
+		referencedCount = 1;
+    }
 }
 
-public abstract class AssetBundleManager : ResManagerBase
+public class AssetBundleManager : ResManagerBase
 {
+	private AssetBundleManifest assetBundleManifest = null;
+
     private Dictionary<string, LoadedAssetBundle> loadedAssetBundles = new Dictionary<string, LoadedAssetBundle>();
+
+	public override void Init(ResourceDefine resourceDefine)
+	{
+		base.Init(resourceDefine);
+
+        LoadABManifest();
+	}
+
+    public void LoadABManifest(bool isPermanent = false)
+	{
+        ResourceInfo bundle = GetResourceInfo(ABConfiger.ASSET_MANIFEST_NAME, ResourceType.RES_ASSETBUNDLE, isPermanent);
+        string path = ABConfiger.GetABFilePath(ABConfiger.ASSET_MANIFEST_NAME);
+		Debug.Log("load asset bundle url==" + path);
+
+		if (path == string.Empty)
+		{
+            RemoveResourceInfo(ABConfiger.ASSET_MANIFEST_NAME);
+			return;
+		}
+
+		AssetBundle assetBundle = AssetBundle.LoadFromFile(path);
+		if (assetBundle == null)
+		{
+            RemoveResourceInfo(ABConfiger.ASSET_MANIFEST_NAME);
+
+            Debug.LogError("Load Local Manifest error!");
+			return;
+		}
+
+		assetBundleManifest = assetBundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
+		bundle._assetObj = assetBundle;
+	}
 
     public override ResManagerType ManagerType()
     {
@@ -40,8 +85,28 @@ public abstract class AssetBundleManager : ResManagerBase
 		return ret;
     }
 
-    #region asset bundle 同步加载
-    protected override UnityEngine.Object Load(ResourceInfo info)
+	#region 仅仅加载Bundle
+	protected override void LoadBundle(ResourceInfo info)
+	{
+		//ResData bundleData = GetBundleRes(info.Name, info.ResType);
+		//if (bundleData == null)
+		//{
+		//    Debug.LogError("Get bundle data error!");
+		//    return;
+		//}
+
+		AssetBundle assetBundle = GetCacheAssetBundle(info.Name);
+		if (assetBundle != null)
+		{
+			return;
+		}
+
+		LoadSyncAssetBundle(info);
+	}
+	#endregion
+
+	#region asset bundle 同步加载
+	protected override UnityEngine.Object Load(ResourceInfo info)
     {
         AssetBundle assetBundle = GetCacheAssetBundle(info.Name);
         if (assetBundle != null)
@@ -68,216 +133,176 @@ public abstract class AssetBundleManager : ResManagerBase
     private AssetBundle LoadSyncAssetBundle(ResourceInfo info)
     {
         LoadSyncDependencies(info);
-        return LoadAssetBundle(info);
+        return LoadAssetBundle(info.Name, info.Path);
     }
 
     private void LoadSyncDependencies(ResourceInfo info)
     {
-        List<string> dependencies = info.Dependencies;
-        if(dependencies == null)
+        string[] dependencies = assetBundleManifest.GetAllDependencies(info.Path);
+        if(dependencies == null || dependencies.Length == 0)
         {
-            return;    
+            return;
         }
 
         foreach (string dependence in dependencies)
         {
             AssetBundle assetBundle = GetCacheAssetBundle(dependence);
-            if (assetBundle != null) 
+            if (assetBundle != null)
             {
                 continue;
             }
 
-            ResourceInfo depData = GetDependResourceInfo(dependence);
-            if (depData == null)
-            {
-                Debug.LogError("Find dependend bundle error! name:" + dependence);
-                continue;
-            }
-
-            LoadAssetBundle(depData);
+            LoadAssetBundle(dependence);
         }
     }
 
-	protected virtual ResourceInfo GetDependResourceInfo(string name)
-	{
-		return null;
-	}
-
-    private AssetBundle LoadAssetBundle(ResourceInfo info)
+    private AssetBundle LoadAssetBundle(string abPath)
     {
-        string path = PathConfiger.GetABFilePath(info.Path);
-        if (path == string.Empty || path == "")
-        {
-            Debug.LogError("load sync asset bundle error! path===" + path);
-            return null;
-        }
+        string name = Path.GetFileNameWithoutExtension(abPath);
+        return LoadAssetBundle(name, abPath);
+    }
 
+    private AssetBundle LoadAssetBundle(string name, string abPath)
+    {
+        string path = ABConfiger.GetABFilePath(abPath);
         AssetBundle assetbundle = AssetBundle.LoadFromFile(path);
         if (assetbundle == null)
         {
-            Debug.LogError("load sync asset bundle error! path===" + path);
             return null;
         }
 
-        loadedAssetBundles.Add(info.Name, new LoadedAssetBundle(info.Name, assetbundle));
+        loadedAssetBundles.Add(name, new LoadedAssetBundle(name, assetbundle));
         return assetbundle;
-    }
-    #endregion
-
-    #region 仅仅加载Bundle
-    protected override void LoadBundle(ResourceInfo info)
-    {
-        //ResData bundleData = GetBundleRes(info.Name, info.ResType);
-        //if (bundleData == null)
-        //{
-        //    Debug.LogError("Get bundle data error!");
-        //    return;
-        //}
-
-        AssetBundle assetBundle = GetCacheAssetBundle(info.Name);
-        if (assetBundle != null)
-        {
-            return;
-        }
-
-        LoadSyncAssetBundle(info);
     }
     #endregion
 
     #region 异步加载资源
     public override IEnumerator LoadAsync(ResourceInfo info, Action<UnityEngine.Object> load, Action<float> progress)
     {
-        yield break;
-
-        /*if (assetBundleManifest == null)
-        {
-            LoadLocalManifest();
-            yield return null;
-        }
-
-        LoadAsyncAssetBundle(info.Name);
-
-        CoroutineManger.Instance.StartCoroutine(LoadAsync(info.Name, (_obj) =>
-        {
-            if(_obj == null || load == null)
+		AssetBundle assetBundle = GetCacheAssetBundle(info.Name);
+		if (assetBundle != null)
+		{
+            if(load != null)
             {
-                return;
+                load(assetBundle.LoadAsset(info.Name));
             }
 
-            info._assetObj = _obj;
-            load(_obj);
-
-        }, progress));
-         */
-    }
-
-    private IEnumerator LoadAsync(string name, Action<UnityEngine.Object> load, Action<float> progress)
-    {
-        yield break;
-
-        /*string assetBundleName = GetAssetBundleName(name);
-
-        LoadedAssetBundle loadBundle = null;
-        while (true)
-        {
-            string error = string.Empty;
-            loadBundle = GetLoadedAssetBundle(assetBundleName);
-
-            if (error != null || loadBundle != null)
+            if(progress != null)
             {
-                break;
+                progress(1.0f);                
             }
 
-            yield return null;
-        }
+            yield break;
+		}
 
-        if (loadBundle == null || loadBundle.assetBundle == null)
+        CoroutineManger.Instance.StartCoroutine(LoadAsyncAssetBundle(info));
+
+        while(true)
         {
+            LoadedAssetBundle ab = GetLoadedAssetBundle(info);
+            if(ab == null)
+            {
+                yield return null;
+                continue;
+            }
+
+            if(ab.loadError)
+            {
+                Debug.LogError("Load asset bundle error! name:" + info.Name);
+                if(load != null)
+                {
+                    load(null);
+                }
+
+                yield break;
+            }
+
+            var abRequest = ab.assetBundle.LoadAssetAsync(info.Name);
+            while (!abRequest.isDone)
+            {
+            	if (progress != null)
+            	{
+            		progress(abRequest.progress);
+            	}
+
+                yield return null;
+            }
+
+            if (progress != null)
+            {
+            	progress(1.0f);
+            }
+
+            info._assetObj = abRequest.asset;
+
             if (load != null)
             {
-                load(null);
+            	load(abRequest.asset);
             }
 
             yield break;
         }
+    }
 
-        AssetBundleRequest request = loadBundle.assetBundle.LoadAssetAsync(name);
-        while (!request.isDone)
+    private IEnumerator LoadAsyncAssetBundle(ResourceInfo info)
+	{
+        yield return CoroutineManger.Instance.StartCoroutine(LoadAsyncDependencies(info));
+
+        CoroutineManger.Instance.StartCoroutine(LoadAsyncAssetBundle(info.Name, info.Path));
+	}
+
+    private IEnumerator LoadAsyncDependencies(ResourceInfo info)
+    {
+		string[] dependencies = assetBundleManifest.GetAllDependencies(info.Path);
+		if (dependencies == null || dependencies.Length == 0)
+		{
+            yield break;
+		}
+
+        int loadCount = 0;
+        foreach (string abPath in dependencies)
         {
-            if (progress != null)
+            string name = Path.GetFileNameWithoutExtension(abPath);
+            AssetBundle assetBundle = GetCacheAssetBundle(name);
+            if (assetBundle != null)
             {
-                progress(request.progress);
+                loadCount++;
+                continue;
             }
 
+			CoroutineManger.Instance.StartCoroutine(LoadAsyncAssetBundle(name, abPath, (_obj) =>
+			{
+				loadCount++;
+            }));
+        }
+
+        while(loadCount < dependencies.Length)
+        {
+            yield return null;
+        }
+    }
+
+    private IEnumerator LoadAsyncAssetBundle(string name, string abPath, Action<UnityEngine.Object> load = null)
+    {
+		string path = ABConfiger.GetABFilePath(abPath);
+        var bundleLoadRequest = AssetBundle.LoadFromFileAsync(path);
+        while (!bundleLoadRequest.isDone)
+        {
             yield return null;
         }
 
-        if (progress != null)
+		var assetBundle = bundleLoadRequest.assetBundle;
+		if (assetBundle == null)
+		{
+            loadedAssetBundles.Add(name, new LoadedAssetBundle(name, true, null));
+			yield break;
+		}
+
+		loadedAssetBundles.Add(name, new LoadedAssetBundle(name, assetBundle));
+        if(load != null)
         {
-            progress(1.0f);
+            load(assetBundle);
         }
-
-        if (load != null)
-        {
-            load(request.asset);
-        }*/
-    }
-    
-    private void LoadAsyncAssetBundle(string name)
-    {
-        string assetBundleName = GetAssetBundleName(name);
-
-        // Check if the assetBundle has already been processed.
-        bool isAlreadyProcessed = LoadAsyncAssetBundleInternal(assetBundleName);
-
-        // Load dependencies.
-        if (!isAlreadyProcessed)
-            LoadDependencies(assetBundleName);
-    }
-
-    private void LoadDependencies(string assetBundleName)
-    {
-        /*if(assetBundleManifest == null)
-        {
-            LoadLocalManifest();
-        }
-
-        // Get dependecies from the AssetBundleManifest object..
-        // 获取
-        string[] dependencies = assetBundleManifest.GetAllDependencies(assetBundleName);
-        if (dependencies.Length == 0)
-            return;
-
-        dependenciesAssetBundle.Add(assetBundleName, dependencies);
-        for (int i = 0; i < dependencies.Length; i++)
-            LoadAsyncAssetBundleInternal(dependencies[i]);
-         */
-    }
-    
-    private bool LoadAsyncAssetBundleInternal(string assetBundleName)
-    {
-        /*
-        // Already loaded.
-		ResourceInfo bundle = null;
-		resourceDic.TryGetValue (assetBundleName, out bundle);
-		if (bundle != null)
-        {
-			bundle.RefCount++;
-            return true;
-        }
-
-        if (loadingWWWs.ContainsKey(assetBundleName))
-            return true;
-
-        string url = GetWWWFileBundlePath(assetBundleName);
-        //Debugger.Log("load asset bundle url==" + url);
-        loadingWWWs.Add(assetBundleName, new WWW(url));
-
-        loadingErrors.Remove(assetBundleName);
-        return false;
-        */
-
-        return false;
     }
     #endregion
 
@@ -311,11 +336,12 @@ public abstract class AssetBundleManager : ResManagerBase
 
     private void UnloadDependencies(ResourceInfo info, bool unloadObject)
     {
-        // Loop dependencies.
-        foreach (var dependency in info.Dependencies)
+        string[] dependencies = assetBundleManifest.GetAllDependencies(info.Path);
+        foreach (var abPath in dependencies)
         {
+            string name = Path.GetFileNameWithoutExtension(abPath);
             LoadedAssetBundle bundle = null;
-            if (!loadedAssetBundles.TryGetValue(dependency, out bundle))
+            if (!loadedAssetBundles.TryGetValue(name, out bundle))
             {
                 continue;
             }
@@ -334,23 +360,9 @@ public abstract class AssetBundleManager : ResManagerBase
             //Debugger.Log("AssetBundle " + assetBundleName + " has been unloaded successfully");
         }
     }
-    #endregion
+	#endregion
 
-    #region 公用功能模块
-    //public abstract ResData GetBundleRes(string name, int type);
-
-    //public abstract ResData GetBundleResDirect(string name);
-
-    //private ResData GetBundleRes(string name, int type)
-    //{
-    //    return ABAssetDataMgr.Instance.FindResData(name, type);
-    //}
-
-    //private ResData GetBundleResDirect(string name)
-    //{
-    //    return ABAssetDataMgr.Instance.FindResData(name);
-    //}
-
+	#region 公用功能模块
     private AssetBundle GetCacheAssetBundle(string name)
     {
         LoadedAssetBundle bundle = null;
@@ -381,7 +393,7 @@ public abstract class AssetBundleManager : ResManagerBase
     /// <returns></returns>
     private string GetAssetBundleName(string assetName)
     {
-        string assetBundleName = string.Format("{0}.{1}", assetName, PathConfiger.BUNDLE_SUFFIX);
+        string assetBundleName = string.Format("{0}.{1}", assetName, ABConfiger.BUNDLE_SUFFIX);
         return assetBundleName;
     }
     #endregion

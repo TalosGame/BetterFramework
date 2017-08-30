@@ -49,7 +49,7 @@ public class WWWRequest
             yield return null;
         }
 
-        string filePath = PathConfiger.GetSandboxFilePath(path);
+        string filePath = ABConfiger.GetSandboxFilePath(path);
         Debugger.Log("filePath===" + filePath);
 
         byte[] datas = request.www.bytes;

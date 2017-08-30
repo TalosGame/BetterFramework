@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 755493103
+CRC: 2744389208
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: b6375424cecde009ca7be19a85fb5fd7
+    Hash: 0fa6b9c73af190281457b12639882f9d
   TypeTreeHash:
     serializedVersion: 2
-    Hash: fbc9aa598e08661aa9e7cc61008d97bb
+    Hash: 1b8f182ed454b17997aaa80c71710441
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -14,8 +14,6 @@ ClassTypes:
 - Class: 4
   Script: {instanceID: 0}
 - Class: 21
-  Script: {instanceID: 0}
-- Class: 28
   Script: {instanceID: 0}
 - Class: 48
   Script: {instanceID: 0}
@@ -31,7 +29,7 @@ ClassTypes:
   Script: {instanceID: 0}
 Assets:
 - Assets/Art/Resources/Role/TerryRole.prefab
-- Assets/Art/Animations/Terry/terry_atlas.png
 - Assets/Art/Animations/Terry/IdleAnim.anim
 - Assets/Art/Animations/Terry/terryAnimControl.controller
-Dependencies: []
+Dependencies:
+- /Users/wangquan/Documents/unity_workspace/BetterFramework/AssetBundles/iOS/GameRes/atlas/role/terry_atlas

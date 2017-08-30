@@ -29,7 +29,7 @@ public class LocalResConfigMgr : SingletonBase<LocalResConfigMgr>
     public void LoadLocalGameRes()
     {
         // 首先读取沙盒目录下资源配置文件
-        string xmlPath = PathConfiger.GetSandboxFilePath(TableGameRes.FILE_NAME);
+        string xmlPath = ABConfiger.GetSandboxFilePath(TableGameRes.FILE_NAME);
         Debug.Log("Sandbox xml file path====" + xmlPath);
         if (MLFileUtil.CheckFileExits(xmlPath))
         {
@@ -43,7 +43,7 @@ public class LocalResConfigMgr : SingletonBase<LocalResConfigMgr>
 
     private IEnumerator LoadLocalGameResAsync()
     {
-        string xmlPath = string.Format("{0}{1}", PathConfiger.PACKAGE_STREAMING_DATA_PATH, TableGameRes.FILE_NAME);
+        string xmlPath = string.Format("{0}{1}", ABConfiger.PACKAGE_STREAMING_DATA_PATH, TableGameRes.FILE_NAME);
         Debug.Log("streaming xml file path==" + xmlPath);
         WWW xmlWWW = new WWW(xmlPath);
         yield return xmlWWW;
@@ -56,7 +56,7 @@ public class LocalResConfigMgr : SingletonBase<LocalResConfigMgr>
         }
 
         // copy file to sandbox
-        string sandBoxPath = PathConfiger.GetSandboxFilePath(TableGameRes.FILE_NAME);
+        string sandBoxPath = ABConfiger.GetSandboxFilePath(TableGameRes.FILE_NAME);
         File.WriteAllBytes(sandBoxPath, datas);
 
         xmlWWW.Dispose();
@@ -90,7 +90,7 @@ public class LocalResConfigMgr : SingletonBase<LocalResConfigMgr>
 
         ABAssetDataMgr.Instance.SyncLobbyAssetInfo(LocalTableResConfig);
 
-        string xmlPath = PathConfiger.GetSandboxFilePath(TableGameRes.FILE_NAME);
+        string xmlPath = ABConfiger.GetSandboxFilePath(TableGameRes.FILE_NAME);
         XMLSerializer.Save<TableGameRes>(xmlPath, LocalTableResConfig);
     }
 
@@ -112,7 +112,7 @@ public class LocalResConfigMgr : SingletonBase<LocalResConfigMgr>
 
         ABAssetDataMgr.Instance.SyncGameAssetInfo(LocalTableResConfig, productId);
 
-        string xmlPath = PathConfiger.GetSandboxFilePath(TableGameRes.FILE_NAME);
+        string xmlPath = ABConfiger.GetSandboxFilePath(TableGameRes.FILE_NAME);
         XMLSerializer.Save<TableGameRes>(xmlPath, LocalTableResConfig);
     }
     #endregion

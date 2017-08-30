@@ -56,11 +56,6 @@ public class ResourceInfo
     public string Path { get; set; }
 
     /// <summary>
-    /// 依赖的资源
-    /// </summary>
-    public List<string> Dependencies { get; set; }
-
-    /// <summary>
     /// 引用个数
     /// </summary>
     public int RefCount { get; set; }
@@ -84,7 +79,7 @@ public class ResourceInfo
 
 public abstract class ResManagerBase
 {
-    protected Dictionary<string, ResourceInfo> resourceDic;
+    private Dictionary<string, ResourceInfo> resourceDic;
 
     protected ResourceDefine resourceDefine;
 
@@ -261,7 +256,7 @@ public abstract class ResManagerBase
     /// <param name="name">资源名称</param>
     /// <param name="type">资源类型</param>
     /// <returns></returns>
-    public ResourceInfo GetResourceInfo(string name, int type, bool isPermanent)
+    public ResourceInfo GetResourceInfo(string name, int type, bool isPermanent = false)
     {
         if (string.IsNullOrEmpty(name))
         {
@@ -281,6 +276,19 @@ public abstract class ResManagerBase
         resourceInfo.RefCount++;
         return resourceInfo;
     }
+
+	protected void RemoveResourceInfo(string name)
+    {
+		ResourceInfo resourceInfo = null;
+        if (!resourceDic.TryGetValue(name, out resourceInfo))
+        {
+            return;
+        }
+
+        resourceDic.Remove(name);
+    }
+
+
 
     /// <summary>
     /// 创建资源信息
