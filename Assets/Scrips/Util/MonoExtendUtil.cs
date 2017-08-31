@@ -33,6 +33,24 @@ public static class MonoExtendUtil
 		return t;
 	}
 
+	/// <summary>
+	/// 扩展对象添加到永不销毁到根节点下
+	/// </summary>
+	/// <param name="gameObject">game object.</param>
+    public static void AddToDDOLRoot(this GameObject gameObject)
+	{
+		GameObject ddolMgr = GameObject.FindGameObjectWithTag(DDOL_MANAGER_TAG);
+		if (ddolMgr == null)
+		{
+			ddolMgr = new GameObject("DDOLManagerRoot");
+			ddolMgr.tag = DDOL_MANAGER_TAG;
+
+			GameObject.DontDestroyOnLoad(ddolMgr);
+		}
+
+		gameObject.transform.parent = ddolMgr.transform;
+	}
+
     /// <summary>
     /// 查询子节点
     /// </summary>
@@ -77,19 +95,7 @@ public static class MonoExtendUtil
         return ret;
     }
 
-    public static void AddToDDOLManager(GameObject childObj)
-    {
-        GameObject ddolMgr = GameObject.FindGameObjectWithTag(DDOL_MANAGER_TAG);
-        if (ddolMgr == null)
-        {
-            ddolMgr = new GameObject("DDOLManagerRoot");
-            ddolMgr.tag = DDOL_MANAGER_TAG;
 
-            GameObject.DontDestroyOnLoad(ddolMgr);
-        }
-
-        childObj.transform.parent = ddolMgr.transform;
-    }
 
     /// <summary>
     /// 创建一个childPrefab的实例，并设置其所有子GameObject的layer为parent的layer
@@ -176,9 +182,6 @@ public static class MonoExtendUtil
         }
         root.DetachChildren();
     }
-
-    
-    
 
     /// <summary>
     /// 获得指定目标最大depth值

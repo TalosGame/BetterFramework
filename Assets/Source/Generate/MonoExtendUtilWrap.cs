@@ -46,7 +46,7 @@ public class MonoExtendUtilWrap
 		{
 			ToLua.CheckArgsCount(L, 1);
 			UnityEngine.GameObject arg0 = (UnityEngine.GameObject)ToLua.CheckObject(L, 1, typeof(UnityEngine.GameObject));
-			MonoExtendUtil.AddToDDOLManager(arg0);
+			MonoExtendUtil.AddToDDOLRoot(arg0);
 			return 0;
 		}
 		catch (Exception e)

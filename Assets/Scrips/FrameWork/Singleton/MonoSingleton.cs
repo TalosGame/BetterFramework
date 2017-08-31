@@ -2,8 +2,9 @@
 
 public abstract class MonoSingleton<T> : MonoBehaviour where T : MonoSingleton<T>
 {
-    private static T _instance;
+    protected Transform cacheTransform;
 
+    private static T _instance;
     public static T Instance
     {
         get
@@ -25,8 +26,8 @@ public abstract class MonoSingleton<T> : MonoBehaviour where T : MonoSingleton<T
     }
 
     protected virtual void Init()
-    { 
-        
+    {
+        cacheTransform = this.transform;
     }
 
     protected void OnApplicationQuit()

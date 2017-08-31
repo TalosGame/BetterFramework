@@ -24,8 +24,14 @@ public delegate void VoidDelegate();
 
 #endregion
 
-public class FrameConst
+public class FrameWorkConst
 {
+	// 一次下载的线程数
+	public const int DOWNLOAD_THREADS_COUNT = 1;
+
+	// 下载错误尝试的次数
+	public const int DOWNLOAD_RETRY_TIME = 2;
+
     // 音效默认预加载个数
     public const int SOUND_PRELOAD_AMOUNT = 2;
 }
@@ -169,16 +175,6 @@ public class ABConfiger
 	/// bundle后缀名
 	/// </summary>
 	public const string BUNDLE_SUFFIX = "assetbundle";
-
-	/// <summary>
-	/// 一次下载的线程数
-	/// </summary>
-	public const int DOWNLOAD_THREADS_COUNT = 1;
-
-	/// <summary>
-	/// 下载错误尝试的次数
-	/// </summary>
-	public const int DOWNLOAD_RETRY_TIME = 2;
 
     // persistentData AB & File 路径
 #if UNITY_EDITOR || UNITY_STANDALONE_WIN
