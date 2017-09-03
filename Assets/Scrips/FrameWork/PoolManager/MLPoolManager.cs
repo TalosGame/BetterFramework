@@ -7,8 +7,9 @@
 // Desc:
 //      1.同时管理预制池和对象池
 //      2.统一从池生成和回收接口
-//      3.后续想扩展新的对象池类只需要继承池基类即可
-//
+//      3.管理类为类使接口统一，在对象池管理这里有装
+//        箱拆箱牺牲了一点性能
+// 
 // Copyright (c) 2017 
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -34,34 +35,6 @@ using UnityEngine.SceneManagement;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-
-//public class PoolDictionary
-//{
-//	private Dictionary<string, object> _dict = new Dictionary<string, object>();
-//    public Dictionary<string, object> PoolDict
-//    {
-//        get
-//        {
-//            return _dict;
-//        }
-//    }
-
-//    public void Add<T>(string key, T value) where T : class
-//	{
-//		_dict.Add(key, value);
-//	}
-
-//    public T GetValue<T>(string key) where T : class
-//	{
-//        object poolDic = null;
-//        if(!_dict.TryGetValue(key, out poolDic))
-//        {
-//            return null;
-//        }
-
-//		return poolDic as T;
-//	}
-//}
 
 public class MLPoolManager : MonoSingleton<MLPoolManager>
 {
