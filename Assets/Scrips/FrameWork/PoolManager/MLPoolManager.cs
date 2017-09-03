@@ -32,11 +32,40 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+
+public class PoolDictionary
+{
+	private Dictionary<string, object> _dict = new Dictionary<string, object>();
+    public Dictionary<string, object> PoolDict
+    {
+        get
+        {
+            return _dict;
+        }
+    }
+
+    public void Add<T>(string key, T value) where T : class
+	{
+		_dict.Add(key, value);
+	}
+
+    public T GetValue<T>(string key) where T : class
+	{
+        object poolDic = null;
+        if(!_dict.TryGetValue(key, out poolDic))
+        {
+            return null;
+        }
+
+		return poolDic as T;
+	}
+}
 
 public class MLPoolManager : MonoSingleton<MLPoolManager>
 {
-    private Dictionary<string, MLPoolBase> pools = new Dictionary<string, MLPoolBase>();
+    private PoolDictionary pools = new PoolDictionary();
 
     [SerializeField]
     private bool dontDestroyOnLoad = false;
@@ -61,20 +90,20 @@ public class MLPoolManager : MonoSingleton<MLPoolManager>
         }
     }
 
-    public void CreatePool<TP, TI>(TI poolItem, int preloadAmount = 10, bool isLimit = true) 
-        where TP : MLPoolBase
+    public void CreatePool<TP, TI>(TI poolItem = null, int preloadAmount = 10, bool isLimit = true) 
+        where TP : MLPoolBase<TI>
         where TI : class
     {
-        MLPoolBase pool = CreatePoolClass<TP>() as MLPoolBase;
+        MLPoolBase<TI> pool = CreatePoolClass<TP>() as MLPoolBase<TI>;
         if(pool == null)
         {
             return;
         }
 
-        pool.Init(poolItem, preloadAmount, transform, isLimit);
-        pool.CreatePoolItems();
+        pool.Init<TI>(poolItem, preloadAmount, transform, isLimit);
+        pool.CreatePoolItems<TI>();
 
-        AddPool(pool);
+        pools.Add<MLPoolBase<TI>>(pool.itemName, pool);
     }
 
     private object CreatePoolClass<T>()
@@ -89,27 +118,16 @@ public class MLPoolManager : MonoSingleton<MLPoolManager>
 		return Activator.CreateInstance(type);
 	}
 
-	public void AddPool(MLPoolBase pool)
+    public MLPoolBase<T> GetPool<T>(string poolItem) where T : class
 	{
-		MLPoolBase cachePool = GetPool(pool.itemName);
-		if (cachePool != null)
-		{
-			return;
-		}
+        MLPoolBase<T> cachePool = pools.GetValue<MLPoolBase<T>>(poolItem);
+        if(cachePool == null)
+        {
+			Debug.LogWarning("Can't find item in any pool error! ItemName:" + poolItem);
+			return null;
+        }
 
-		pools.Add(pool.itemName, pool);
-	}
-
-    public MLPoolBase GetPool(string poolItem)
-	{
-		MLPoolBase cachePool = null;
-		if (pools.TryGetValue(poolItem, out cachePool))
-		{
-			return cachePool;
-		}
-
-		Debug.LogWarning("Get prefab pool error! prefabName:" + poolItem);
-		return null;
+        return cachePool;
 	}
 
     public T Spawn<T>(string poolItem) where T : class
@@ -119,7 +137,7 @@ public class MLPoolManager : MonoSingleton<MLPoolManager>
 
     public T Spawn<T>(string poolItem, Transform parent) where T : class
 	{
-        MLPoolBase pool = GetPool(poolItem);
+        MLPoolBase<T> pool = GetPool<T>(poolItem);
 		if(pool == null)
 		{
             return default(T);
@@ -128,32 +146,38 @@ public class MLPoolManager : MonoSingleton<MLPoolManager>
 		return pool.Spawn<T>(parent);
 	}
 
-    public void Despawn<T>(T item) where T : class
+    public void Despawn<T>(string poolItem, T item) where T : class
     {
-		bool sucess = false;
-		var enumera = pools.GetEnumerator ();
-		while (enumera.MoveNext ()) 
-		{
-            MLPoolBase pool = enumera.Current.Value;
-			if(!pool.Despawn<T>(item))
-				Debug.LogError ("Don't Despawn duplicate Object!");
+		MLPoolBase<T> pool = GetPool<T>(poolItem);
+        if (pool == null)
+        {
+            return;
+        }
 
-			sucess = true;
-			break;
-		}
+        if (!pool.Despawn<T>(item))
+        {
+            Debug.LogError("Don't Despawn duplicate Object!");
+        }
+    }
 
-		// If still false, then the instance wasn't found anywhere in the pool
-		if (!sucess)
+    public void DespawnAll<T>(string poolItem) where T : class
+    {
+		MLPoolBase<T> pool = GetPool<T>(poolItem);
+		if (pool == null)
 		{
-			Debug.LogError("Prefab pool not found in SpawnPool");
 			return;
 		}
+
+        pool.DespawnAll();
     }
 
     public void DespawnAll()
     {
-
+        var enumera = pools.PoolDict.GetEnumerator();
+        while (enumera.MoveNext())
+        {
+            MLPoolBase<object> pool = enumera.Current.Value as MLPoolBase<object>;
+            pool.DespawnAll();
+        }
     }
 }
-
-

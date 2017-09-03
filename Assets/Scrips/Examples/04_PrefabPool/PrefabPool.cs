@@ -6,6 +6,7 @@ public class PrefabPool : MonoBehaviour
 {
 	private const string SPAWN_PREFAB_OBJECT_TEXT = "从池取";
 	private const string DESPAWN_PREFAB_OBJECT_TEXT = "放回池";
+    private const string DESPAWN_ALL_PREFAB_OBJECT_TEXT = "全部放回池";
 
     private const string POOL_ITEM_NAME = "TerryRole";
 
@@ -42,6 +43,12 @@ public class PrefabPool : MonoBehaviour
             DespawnPrefaObject();
 			return;
 		}
+
+        if (GUI.Button(new Rect(10, 90, 120, 30), DESPAWN_ALL_PREFAB_OBJECT_TEXT, btnStyle))
+		{
+			DespawnAllPrefaObject();
+			return;
+		}
 	}
 
     private void SpawnPrefabObject()
@@ -59,6 +66,16 @@ public class PrefabPool : MonoBehaviour
             return;
 
         Transform terryTrans = liveObjects[0];
-        poolMgr.Despawn<Transform>(terryTrans);
+        poolMgr.Despawn<Transform>(POOL_ITEM_NAME, terryTrans);
+        liveObjects.Remove(terryTrans);
+    }
+
+    private void DespawnAllPrefaObject()
+    {
+		if (liveObjects.Count <= 0)
+			return;
+
+        poolMgr.DespawnAll<Transform>(POOL_ITEM_NAME);
+        liveObjects.Clear();
     }
 }

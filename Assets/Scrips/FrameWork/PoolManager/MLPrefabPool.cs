@@ -31,13 +31,10 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class MLPrefabPool : MLPoolBase
+public class MLPrefabPool : MLPoolBase<Transform>
 {
 	private Transform defaultParent;
-
 	private Transform prefabTrans;
-	private Stack<Transform> freeObjects = new Stack<Transform> ();
-    private LinkedList<Transform> usedObjects = new LinkedList<Transform> ();
 
     public override void Init<T>(T poolItem, int preloadAmount = 10, Transform parent = null, bool isLimit = true)
     {
@@ -51,62 +48,39 @@ public class MLPrefabPool : MLPoolBase
 		this.limitInstances = isLimit;
     }
 
-	public override void CreatePoolItems()
+	public override void CreatePoolItems<T>()
 	{
 		if (prefabTrans == null)
 			return;
 
-		for (int i = 0; i < preloadAmount; i++) 
+		for (int i = 0; i < preloadAmount; i++)
 		{
-			Transform trans = SpawnNewInstance ();
+            Transform trans = SpawnNewItem<Transform> ();
 			trans.gameObject.SetActive(false);
 			freeObjects.Push (trans);
 		}
 	}
 
-	private Transform SpawnNewInstance()
-	{
-		Transform trans = GameObject.Instantiate (prefabTrans, defaultParent);
+    public override T SpawnNewItem<T>()
+    {
+		Transform trans = GameObject.Instantiate(prefabTrans, defaultParent);
 
 		trans.name = trans.name.Replace("(Clone)", "");
 		trans.position = Vector3.zero;
 		trans.rotation = Quaternion.identity;
-		return trans;
-	}
-
-    public override T Spawn<T>(Transform parent = null)
-	{
-		int freeObjCnt = freeObjects.Count;
-		int useObjCnt = usedObjects.Count;
-
-		if (freeObjCnt + useObjCnt >= limitAmount && limitInstances)
-		{
-			Debug.LogWarning("Can't Spawn new Instance. Cause not have enough free Object in pool!");
-			return null;
-		}
-
-		Transform trans = null;
-		if (freeObjCnt == 0)
-		{
-			trans = SpawnNewInstance();
-            MarkItemUsed(trans, parent);
-			return trans as T;
-		}
-
-		trans = freeObjects.Pop();
-        MarkItemUsed(trans, parent);
 		return trans as T;
-	}
+    }
 
-    private void MarkItemUsed(Transform item, Transform parent)
+    public override void MarkItemUsed<T>(T item, Transform parent = null)
     {
-        if(parent != null)
-        {
-            item.parent = parent;
-        }
+        Transform itemTrans = item as Transform;
+		if (parent != null)
+		{
+			itemTrans.parent = parent;
+		}
 
-        item.gameObject.SetActive (true);
-        usedObjects.AddFirst(item);
+		itemTrans.gameObject.SetActive(true);
+		usedObjects.AddFirst(itemTrans);
     }
 
 	public override bool Despawn<T>(T item)
@@ -136,9 +110,15 @@ public class MLPrefabPool : MLPoolBase
 		return true;
 	}
 
-	public void DespawnAll()
+    public override void DespawnAll()
 	{
-
+		var node = usedObjects.First;
+		while (node != null)
+		{
+			var next = node.Next;
+            Despawn<Transform>(node.Value as Transform);
+			node = next;
+		}
 	}
 }
 
