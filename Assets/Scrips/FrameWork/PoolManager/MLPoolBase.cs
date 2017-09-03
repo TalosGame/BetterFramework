@@ -10,16 +10,23 @@ public enum PoolStatus
     noFreeItem,
 }
 
-public abstract class MLPoolBase<T> where T : class
+public abstract class MLPoolBase
 {
     public string itemName;
-
-    protected Stack<T> freeObjects = new Stack<T>();
-	protected LinkedList<T> usedObjects = new LinkedList<T>();
 
     protected int preloadAmount;
     protected int limitAmount;
     protected bool limitInstances;
+
+    public abstract int FreeObjectsCount
+    {
+        get;
+    }
+
+    public abstract int UsedObjectsCount
+    {
+        get;
+    }
 
     public abstract void Init<T>(T poolItem = null, int preloadAmount = 10, Transform parent = null,
                                  bool isLimit = true) where T : class;
@@ -28,8 +35,8 @@ public abstract class MLPoolBase<T> where T : class
 
     public T Spawn<T>(Transform parent = null) where T : class
     {
-        int freeObjCnt = freeObjects.Count;
-        int useObjCnt = usedObjects.Count;
+        int freeObjCnt = FreeObjectsCount;
+        int useObjCnt = UsedObjectsCount;
 
 		if (freeObjCnt + useObjCnt >= limitAmount && limitInstances)
 		{
@@ -45,17 +52,14 @@ public abstract class MLPoolBase<T> where T : class
 			return item as T;
 		}
 
-        item = GetFreeIetm<T>();
+        item = GetFreeItem<T>();
 		MarkItemUsed(item, parent);
 		return item as T;
     }
 
     public abstract T SpawnNewItem<T>() where T : class;
 
-    private T GetFreeIetm<T>() where T : class
-    {
-        return freeObjects.Pop() as T;
-    }
+    public abstract T GetFreeItem<T>() where T : class;
 
     public abstract void MarkItemUsed<T>(T item, Transform parent = null) where T : class;
 

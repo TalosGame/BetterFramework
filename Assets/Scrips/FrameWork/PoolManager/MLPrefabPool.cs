@@ -31,10 +31,29 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class MLPrefabPool : MLPoolBase<Transform>
+public class MLPrefabPool : MLPoolBase
 {
+    protected Stack<Transform> freeObjects = new Stack<Transform>();
+    protected List<Transform> usedObjects = new List<Transform>();
+
 	private Transform defaultParent;
 	private Transform prefabTrans;
+
+    public override int FreeObjectsCount
+    {
+        get
+        {
+            return freeObjects.Count;
+        }
+    }
+
+    public override int UsedObjectsCount
+    {
+        get
+        {
+            return usedObjects.Count;
+        }
+    }
 
     public override void Init<T>(T poolItem, int preloadAmount = 10, Transform parent = null, bool isLimit = true)
     {
@@ -71,6 +90,11 @@ public class MLPrefabPool : MLPoolBase<Transform>
 		return trans as T;
     }
 
+    public override T GetFreeItem<T>()
+    {
+        return freeObjects.Pop() as T;
+    }
+
     public override void MarkItemUsed<T>(T item, Transform parent = null)
     {
         Transform itemTrans = item as Transform;
@@ -80,21 +104,12 @@ public class MLPrefabPool : MLPoolBase<Transform>
 		}
 
 		itemTrans.gameObject.SetActive(true);
-		usedObjects.AddFirst(itemTrans);
+        usedObjects.Add(itemTrans);
     }
 
 	public override bool Despawn<T>(T item)
 	{
-        if(typeof(T) != typeof(Transform))
-        {
-            return false;
-        }
-
         Transform transform = item as Transform;
-        if(transform.name != this.itemName)
-        {
-            return false;
-        }
 
         if (!usedObjects.Contains(transform))
 		{
@@ -112,13 +127,11 @@ public class MLPrefabPool : MLPoolBase<Transform>
 
     public override void DespawnAll()
 	{
-		var node = usedObjects.First;
-		while (node != null)
-		{
-			var next = node.Next;
-            Despawn<Transform>(node.Value as Transform);
-			node = next;
-		}
+        for (int i = usedObjects.Count - 1; i >= 0; i--)
+        {
+            var node = usedObjects[i];
+            Despawn<Transform>(node);
+        }
 	}
 }
 

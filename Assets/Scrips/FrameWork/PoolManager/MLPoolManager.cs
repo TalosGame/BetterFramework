@@ -35,37 +35,37 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-public class PoolDictionary
-{
-	private Dictionary<string, object> _dict = new Dictionary<string, object>();
-    public Dictionary<string, object> PoolDict
-    {
-        get
-        {
-            return _dict;
-        }
-    }
+//public class PoolDictionary
+//{
+//	private Dictionary<string, object> _dict = new Dictionary<string, object>();
+//    public Dictionary<string, object> PoolDict
+//    {
+//        get
+//        {
+//            return _dict;
+//        }
+//    }
 
-    public void Add<T>(string key, T value) where T : class
-	{
-		_dict.Add(key, value);
-	}
+//    public void Add<T>(string key, T value) where T : class
+//	{
+//		_dict.Add(key, value);
+//	}
 
-    public T GetValue<T>(string key) where T : class
-	{
-        object poolDic = null;
-        if(!_dict.TryGetValue(key, out poolDic))
-        {
-            return null;
-        }
+//    public T GetValue<T>(string key) where T : class
+//	{
+//        object poolDic = null;
+//        if(!_dict.TryGetValue(key, out poolDic))
+//        {
+//            return null;
+//        }
 
-		return poolDic as T;
-	}
-}
+//		return poolDic as T;
+//	}
+//}
 
 public class MLPoolManager : MonoSingleton<MLPoolManager>
 {
-    private PoolDictionary pools = new PoolDictionary();
+    private Dictionary<string, MLPoolBase> pools = new Dictionary<string, MLPoolBase>();
 
     [SerializeField]
     private bool dontDestroyOnLoad = false;
@@ -91,10 +91,10 @@ public class MLPoolManager : MonoSingleton<MLPoolManager>
     }
 
     public void CreatePool<TP, TI>(TI poolItem = null, int preloadAmount = 10, bool isLimit = true) 
-        where TP : MLPoolBase<TI>
+        where TP : MLPoolBase
         where TI : class
     {
-        MLPoolBase<TI> pool = CreatePoolClass<TP>() as MLPoolBase<TI>;
+        MLPoolBase pool = CreatePoolClass<TP>() as MLPoolBase;
         if(pool == null)
         {
             return;
@@ -103,7 +103,7 @@ public class MLPoolManager : MonoSingleton<MLPoolManager>
         pool.Init<TI>(poolItem, preloadAmount, transform, isLimit);
         pool.CreatePoolItems<TI>();
 
-        pools.Add<MLPoolBase<TI>>(pool.itemName, pool);
+        pools.Add(pool.itemName, pool);
     }
 
     private object CreatePoolClass<T>()
@@ -118,10 +118,10 @@ public class MLPoolManager : MonoSingleton<MLPoolManager>
 		return Activator.CreateInstance(type);
 	}
 
-    public MLPoolBase<T> GetPool<T>(string poolItem) where T : class
+    public MLPoolBase GetPool<T>(string poolItem) where T : class
 	{
-        MLPoolBase<T> cachePool = pools.GetValue<MLPoolBase<T>>(poolItem);
-        if(cachePool == null)
+        MLPoolBase cachePool = null;
+        if(!pools.TryGetValue(poolItem, out cachePool))
         {
 			Debug.LogWarning("Can't find item in any pool error! ItemName:" + poolItem);
 			return null;
@@ -137,7 +137,7 @@ public class MLPoolManager : MonoSingleton<MLPoolManager>
 
     public T Spawn<T>(string poolItem, Transform parent) where T : class
 	{
-        MLPoolBase<T> pool = GetPool<T>(poolItem);
+        MLPoolBase pool = GetPool<T>(poolItem);
 		if(pool == null)
 		{
             return default(T);
@@ -148,7 +148,7 @@ public class MLPoolManager : MonoSingleton<MLPoolManager>
 
     public void Despawn<T>(string poolItem, T item) where T : class
     {
-		MLPoolBase<T> pool = GetPool<T>(poolItem);
+		MLPoolBase pool = GetPool<T>(poolItem);
         if (pool == null)
         {
             return;
@@ -162,7 +162,7 @@ public class MLPoolManager : MonoSingleton<MLPoolManager>
 
     public void DespawnAll<T>(string poolItem) where T : class
     {
-		MLPoolBase<T> pool = GetPool<T>(poolItem);
+		MLPoolBase pool = GetPool<T>(poolItem);
 		if (pool == null)
 		{
 			return;
@@ -173,10 +173,10 @@ public class MLPoolManager : MonoSingleton<MLPoolManager>
 
     public void DespawnAll()
     {
-        var enumera = pools.PoolDict.GetEnumerator();
+        var enumera = pools.GetEnumerator();
         while (enumera.MoveNext())
         {
-            MLPoolBase<object> pool = enumera.Current.Value as MLPoolBase<object>;
+            MLPoolBase pool = enumera.Current.Value;
             pool.DespawnAll();
         }
     }

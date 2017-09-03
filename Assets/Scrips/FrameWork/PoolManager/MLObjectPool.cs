@@ -3,11 +3,31 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-public class MLObjectPool : MLPoolBase<object>
+public class MLObjectPool : MLPoolBase
 {
+    protected Stack<object> freeObjects = new Stack<object>();
+    protected List<object> usedObjects = new List<object>();
+
+    public override int FreeObjectsCount
+    {
+        get
+        {
+            return freeObjects.Count;
+        }
+    }
+
+    public override int UsedObjectsCount
+    {
+        get
+        {
+            return usedObjects.Count;
+        }
+    }
+
     public override void Init<T>(T poolItem = null, int preloadAmount = 10, Transform parent = null, bool isLimit = true)
     {
-        //this.itemName = this.prefabTrans.name;
+        Type t = typeof(T);
+        this.itemName = t.FullName;
 
 		this.preloadAmount = preloadAmount;
 		this.limitAmount = this.preloadAmount << 1;
@@ -22,7 +42,7 @@ public class MLObjectPool : MLPoolBase<object>
             if (item == null)
                 break;
             
-            freeObjects.Push(item);
+            freeObjects.Push(item as T);
 		}
     }
 
@@ -38,19 +58,18 @@ public class MLObjectPool : MLPoolBase<object>
         return item;
     }
 
+	public override T GetFreeItem<T>()
+	{
+		return freeObjects.Pop() as T;
+	}
+
     public override void MarkItemUsed<T>(T item, Transform parent = null)
     {
-        usedObjects.AddFirst(item);
+        usedObjects.Add(item);
     }
 
     public override bool Despawn<T>(T item)
     {
-        Type t = typeof(T);
-        if (t.FullName != this.itemName)
-		{
-			return false;
-		}
-
 		if (!usedObjects.Contains(item))
 		{
 			return false;
@@ -65,12 +84,10 @@ public class MLObjectPool : MLPoolBase<object>
 
     public override void DespawnAll()
     {
-		var node = usedObjects.First;
-		while (node != null)
+		for (int i = usedObjects.Count - 1; i >= 0; i--)
 		{
-			var next = node.Next;
-            Despawn<object>(node.Value);
-			node = next;
+			var node = usedObjects[i];
+			Despawn(node);
 		}
     }
 }

@@ -46,7 +46,7 @@ public class PrefabPool : MonoBehaviour
 
         if (GUI.Button(new Rect(10, 90, 120, 30), DESPAWN_ALL_PREFAB_OBJECT_TEXT, btnStyle))
 		{
-			DespawnAllPrefaObject();
+            DespawnAllPrefabObject();
 			return;
 		}
 	}
@@ -70,7 +70,7 @@ public class PrefabPool : MonoBehaviour
         liveObjects.Remove(terryTrans);
     }
 
-    private void DespawnAllPrefaObject()
+    private void DespawnAllPrefabObject()
     {
 		if (liveObjects.Count <= 0)
 			return;
