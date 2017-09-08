@@ -2,11 +2,18 @@
 
 public class PBMetaManager : SingletonBase<PBMetaManager>
 {
+    public  FormulaMeta  formulaMeta;
+
     public  SkillMeta  skillMeta;
 
     public void LoadMeta<T>()
     {
         Type type = typeof(T);
+        if (type == typeof(FormulaMeta))
+        {
+                formulaMeta = DataLoader<FormulaMeta>.LoadPBData(type.FullName);
+                return;
+        }
         if (type == typeof(SkillMeta))
         {
                 skillMeta = DataLoader<SkillMeta>.LoadPBData(type.FullName);
@@ -19,6 +26,14 @@ public class PBMetaManager : SingletonBase<PBMetaManager>
         where TM : class
     {
         Type type = typeof(T);
+        if (type == typeof(FormulaMeta))
+        {
+                if (formulaMeta == null)
+                {
+                        LoadMeta<FormulaMeta>();
+                }
+                return formulaMeta.GetMetaValue<TM>(id) as TM;
+        }
         if (type == typeof(SkillMeta))
         {
                 if (skillMeta == null)

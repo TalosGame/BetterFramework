@@ -84,22 +84,15 @@ public class Excel2PBTools
             IExcelDataReader excelReader = ExcelReaderFactory.CreateOpenXmlReader(fs);
             DataSet result = excelReader.AsDataSet();
             DataTableCollection tables = result.Tables;
+
+			classNames.Add(className);
+			propertyManagerCode += "    public  " + GetClassTableName(className) + "  " + GetClassTableInstName(className) + ";\n\n";
+
             if(tables.Count > 1)
             {
-                classNames.Add(className);
-
-                //propertyManagerCode += "    [ProtoMember(" + (priority1++) + ")]\n";
-                //propertyManagerCode += "    public " + className + " " + className + ";\n\n";
-
                 CreateMultiTableClassFile(tables, className);
-
             }else
             {
-                //classDicNames.Add(className);
-                classNames.Add(className);
-
-                propertyManagerCode += "    public  " + GetClassTableName(className) + "  " + GetClassTableInstName(className) + ";\n\n";
-
                 CreateOneTableClassFile(tables, className);
             }
 
@@ -147,8 +140,9 @@ public class Excel2PBTools
     private static void CreateMultiTableClassFile(DataTableCollection tables, string className)
     {
         string code = "";
+
         // 每个sheet对应一个class
-        List<string> classNames = new List<string>();
+        List<string> clsSheetNames = new List<string>();
 
         code += "using System;\n";
         code += "using System.Collections;\n";
@@ -158,34 +152,11 @@ public class Excel2PBTools
         foreach(DataTable dt in tables)
         {
             string clsName = GetClassName(dt.TableName);
-
             code += WriteClass(dt, clsName);
-
-            classNames.Add(clsName);
+            clsSheetNames.Add(clsName);
         }
 
-        /*
-        code += "[ProtoContract]\n";
-        code += "public class " + className + "\n";
-        code += "{\n";
-
-        int priority1 = 1;
-        for (int i = 0; i < classNames.Count; i++)
-        {
-            string clsName = classNames[i];
-            code += "    [ProtoMember(" + (priority1++) + ")]\n";
-            code += "    public Dictionary<int, " + clsName + "> " + clsName + "Dic = new Dictionary<int, " + clsName + ">();\n\n";
-        }
-
-        code += WriteClassFucntion(null, classNames);
-
-        code += "\n";
-        code += "    public " + className + "()\n";
-        code += "    {}\n";
-        code += "}\n";
-        */
-
-        code += WriteClassTable(className, classNames);
+        code += WriteClassTable(className, clsSheetNames);
 
         Debug.Log("===创建excel " + className + " 文件===");
         WriteClassFile(EXCEL_BEAN_FILE_PATH, className, code);
@@ -238,32 +209,6 @@ public class Excel2PBTools
         return code;
     }
 
-    private static string WriteClassTable(string className, List<string> sheetNames)
-    {
-        string code = "";
-
-		code += "[ProtoContract]\n";
-		code += "public class " + className + "Meta\n";
-		code += "{\n";
-
-		int priority1 = 1;
-		for (int i = 0; i < sheetNames.Count; i++)
-		{
-			string clsName = sheetNames[i];
-			code += "    [ProtoMember(" + (priority1++) + ")]\n";
-			code += "    public Dictionary<int, " + clsName + "> " + clsName + "Dic = new Dictionary<int, " + clsName + ">();\n\n";
-		}
-
-		code += WriteClassFucntion(null, sheetNames);
-
-		code += "\n";
-		code += "    public " + className + "Meta()\n";
-		code += "    {}\n";
-		code += "}\n";
-
-        return code;
-    }
-
     private static string WriteClassTable(string className)
     {
         string code = "";
@@ -289,15 +234,40 @@ public class Excel2PBTools
         return code;
     }
 
+    private static string WriteClassTable(string className, List<string> clsSheetNames)
+    {
+        string code = "";
+
+		code += "[ProtoContract]\n";
+		code += "public class " + GetClassTableName(className) + "\n";
+		code += "{\n";
+
+		int priority1 = 1;
+		for (int i = 0; i < clsSheetNames.Count; i++)
+		{
+			string clsName = clsSheetNames[i];
+			code += "    [ProtoMember(" + (priority1++) + ")]\n";
+			code += "    public Dictionary<int, " + clsName + "> " + clsName + "Dic = new Dictionary<int, " + clsName + ">();\n\n";
+		}
+
+		code += WriteClassFucntion(clsSheetNames);
+
+		code += "\n";
+		code += "    public " + GetClassTableName(className) + "()\n";
+		code += "    {}\n";
+		code += "}\n";
+
+        return code;
+    }
+
     /// <summary>
     /// 根据原型数据字典类生成相应的接口方法
     /// </summary>
-    /// <param name="classNames">多sheet标签类</param>
-    /// <param name="classDicNames">单sheet标签类</param>
+    /// <param name="clsSheetNames">单sheet标签类</param>
     /// <returns></returns>
-    private static string WriteClassFucntion(List<string> classNames, List<string> classDicNames)
+    private static string WriteClassFucntion(List<string> clsSheetNames)
     {
-        if(classDicNames.Count <= 0)
+        if(clsSheetNames.Count <= 0)
         {
             return "\n";
         }
@@ -307,29 +277,14 @@ public class Excel2PBTools
         code += "    {\n";
         code += "        Type type = typeof(T);\n";
 
-        if(classDicNames != null)
+        if(clsSheetNames != null)
         {
-            for (int i = 0; i < classDicNames.Count; i++)
+            for (int i = 0; i < clsSheetNames.Count; i++)
             {
-                string clsName = classDicNames[i];
+                string clsName = clsSheetNames[i];
                 code += "        if (type == typeof(" + clsName + "))\n";
                 code += "        {\n";
                 code += "            return " + clsName + "Dic;\n";
-                code += "        }\n";
-            }
-        }
-        
-        if(classNames != null)
-        {
-            code += "        IDictionary ret = null;\n";
-
-            for (int i = 0; i < classNames.Count; i++)
-            {
-                string clsName = classNames[i];
-                code += "        ret = " + clsName + ".GetPrototypeDic<T>();\n";
-                code += "        if (ret != null)\n";
-                code += "        {\n";
-                code += "            return ret;\n";
                 code += "        }\n";
             }
         }
@@ -337,7 +292,7 @@ public class Excel2PBTools
         code += "        return null;\n";
         code += "    }\n\n";
 
-        code += "    public T GetPrototypeValue<T>(int id) where T : class\n";
+        code += "    public T GetMetaValue<T>(int id) where T : class\n";
         code += "    {\n";
         code += "        IDictionary dic = GetPrototypeDic<T>();\n";
         code += "        return dic[id] as T;\n";
@@ -462,18 +417,10 @@ public class Excel2PBTools
 
     private static void ReadMultiTableClass(DataTableCollection tables, object classObj, string className)
     {
-        // 获取字段类型
-        FieldInfo fieldInfo = classObj.GetType().GetField(className);
-        Type clsType = fieldInfo.FieldType;
-
-        // 创建
-        object fieldClsObj = Activator.CreateInstance(clsType);
-        fieldInfo.SetValue(classObj, fieldClsObj);
-
         foreach (DataTable dt in tables)
         {
             string clsName = GetClassName(dt.TableName);
-            ReadOneTableClass(dt, fieldClsObj, clsName);
+            ReadOneTableClass(dt, classObj, clsName);
         }
     }
 
