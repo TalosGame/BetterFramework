@@ -206,14 +206,14 @@ public abstract class ResManagerBase
             return;
         }
 
-        Debug.Log(resourceDic.Count + " resource(s) in memory before unloading " + name);
+        //Debug.Log(resourceDic.Count + " resource(s) in memory before unloading " + name);
         if (--resInfo.RefCount == 0)
         {
             resourceDic.Remove(name);
-            Debug.Log("Resource " + name + " has been unloaded successfully");
+            //Debug.Log("Resource " + name + " has been unloaded successfully");
         }
 
-        Debug.Log(resourceDic.Count + " resource(s) in memory after unloading " + name);
+        //Debug.Log(resourceDic.Count + " resource(s) in memory after unloading " + name);
     }
 
     public void UnloadAllResource(bool unloadPermanent = false, bool unloadObject = false)

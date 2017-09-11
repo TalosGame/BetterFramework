@@ -924,47 +924,49 @@ public sealed class LuaHelper
     }
     #endregion
 
+    /*
     #region sound interface
     public static void PreloadSound(string name, string path)
     {
-        SoundManager.Instance.PreloadAudio(name, path);
+        AudioManager.Instance.PreloadAudio(name, path);
     }
 
     public static void PlaySound(string name)
     {
-        SoundManager.Instance.PlayAudio(name);
+        AudioManager.Instance.PlayAudio(name);
     }
 
     public static void StopAudio(string name)
     {
-        SoundManager.Instance.StopAudio(name);
+        AudioManager.Instance.StopAudio(name);
     }
 
     public static void StopAudios(int type)
     {
         AudioType audioType = (AudioType)type;
-        SoundManager.Instance.StopAudios(audioType);
+        AudioManager.Instance.StopAudios(audioType);
     }
 
     public static void StopAudios()
     {
-        SoundManager.Instance.StopAudios();
+        AudioManager.Instance.StopAudios();
     }
 
     public static void MusicSetting(bool isPlaying)
     {
-        SoundManager.Instance.MusicSetting(isPlaying);
+        AudioManager.Instance.MusicSetting(isPlaying);
     }
 
     public static void SoundSetting(bool isPlaying)
     {
-        SoundManager.Instance.SoundSetting(isPlaying);
+        AudioManager.Instance.SoundSetting(isPlaying);
     }
     public static void ChangeMusicVolum(int type, float volum) {
         AudioType audioType = (AudioType)type;
-        SoundManager.Instance.AddOrSubAudiosVolume(audioType, volum);
+        AudioManager.Instance.AddOrSubAudiosVolume(audioType, volum);
     }
     #endregion
+    */
 
     #region Resource interface
     public static void AddWindowResPath(int windowID, string path)
@@ -1162,7 +1164,7 @@ public sealed class LuaHelper
         loadingMgr.StartLoadRes(ResLoadingStatus.GameRes);
 #else
         // 清空所有声音
-        SoundManager.Instance.RelaseAllAudios();
+        //AudioManager.Instance.RelaseAllAudios();
 
         // 清除所有资源
         MLResourceManager.Instance.UnloadAllResource(unloadObject: true);
@@ -1189,7 +1191,7 @@ public sealed class LuaHelper
         loadingMgr.StartLoadRes(ResLoadingStatus.ExitGame);
 #else
         // 清空所有声音
-        SoundManager.Instance.RelaseAllAudios();
+        //AudioManager.Instance.RelaseAllAudios();
 
         // 清除所有资源
         MLResourceManager.Instance.UnloadAllResource(unloadObject: true);
@@ -1247,113 +1249,10 @@ public sealed class LuaHelper
 #endif
     }
 
-	#region 系统相关
-	/// <summary>
-	/// 设置剪贴板内容
-	/// </summary>
-	/// <param name="text">剪贴板文字</param>
-	public static void SetClipboar(string text)
-	{
-		PhoneInformationManager.Instance.SetClipboar(text);
-	}
-	/// <summary>
-	/// 获取剪贴板
-	/// </summary>
-	/// <returns></returns>
-	public static string GetClipboarFromPhone()
-	{
-		string arr = PhoneInformationManager.Instance.GetClipboarFromPhone();
-		Debug.Log(arr);
-		return arr;
-	}
-
-	/// <summary>
-	/// 手机震动
-	/// </summary>
-	/// <param name="times">振动Date</param>
-	public static void GetVibrateStrength(int times)
-	{
-		PhoneInformationManager.Instance.GetVibrateStrength(times);
-	}
-
-	/// <summary>
-	/// wifi强度 返回值-5， -1代表没有wifi
-	/// </summary>
-	/// <returns></returns>
-	public static int GetWifiStrength()
-	{
-		return PhoneInformationManager.Instance.GetWifiStrength();
-	}
-
-	/// <summary>
-	/// 获取电量--返回值0-100   -1代表错误
-	/// </summary>
-	/// <returns></returns>
-	public static int GetElectricityStrength()
-	{
-		return PhoneInformationManager.Instance.GetElectricityStrength();
-	}
-
-	/// <summary>
-	/// 获取用户roomid 如果为空直接返回
-	/// </summary>
-	/// <returns></returns>
-	public static string GetRoomId()
-	{
-		return PhoneInformationManager.Instance.GetRoomId();
-	}
-
-    public static void Shake ()
-    {
-#if !UNITY_STANDALONE && !UNITY_EDITOR
-        Handheld.Vibrate();
-#endif
-    }
-
-    /// <summary>
-    /// 手机返回键
-    /// </summary>
-    /// <param name="luaFunc">Lua func.</param>
-    public static void AddReturnButton (LuaFunction luaFunc)
-    {
-        KeyboardManager.Instance.back = delegate
-        {
-            if (luaFunc != null)
-                luaFunc.Call();
-        };
-    }
-
-    /// <summary>
-    /// 手机Home键
-    /// </summary>
-    /// <param name="luaFunc">Lua func.</param>
-    public static void AddHomeButton (LuaFunction luaFunc)
-    {
-        KeyboardManager.Instance.home = delegate
-        {
-            if (luaFunc != null)
-                luaFunc.Call();
-        };
-    }
-
-    /// <summary>
-    /// 手机menu键
-    /// </summary>
-    /// <param name="luaFunc">Lua func.</param>
-    public static void AddMenuButton (LuaFunction luaFunc)
-    {
-        KeyboardManager.Instance.menu = delegate
-        {
-            if (luaFunc != null)
-                luaFunc.Call();
-        };
-    }
-
 	public static void ExitApp()
 	{
 		Application.Quit();
 	}
-	#endregion
 
 	#region call lua interface
 	private static string GetLuaFuncName(string module, string func)

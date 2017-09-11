@@ -39,14 +39,15 @@ public class GameResDefine : ResourceDefine
 		// 添加资源搜索路径
 		AddExResourcePath(ResourceType.RES_UI, "UI");
         AddExResourcePath(ResourceType.RES_META_DATAS, "Metas");
-		AddExResourcePath(ResourceType.RES_AUDIO, "Sounds");
+		AddExResourcePath(ResourceType.RES_AUDIO, "Audios");
 		AddExResourcePath(ResourceType.RES_LUA, "lua");
 
         AddExResourcePath(GameResourceType.RES_ROLE, "Role");
 		AddExResourcePath(GameResourceType.RES_ROLE_TEXTURES, "RoleTextures");
 
-
-
+        // TODO add other res path
 	}
+
+
 }
 

@@ -7,8 +7,8 @@ public class MonoExtendUtilWrap
 	public static void Register(LuaState L)
 	{
 		L.BeginStaticLibs("MonoExtendUtil");
+		L.RegFunction("AddToDDOLRoot", AddToDDOLRoot);
 		L.RegFunction("FindDeepChild", FindDeepChild);
-		L.RegFunction("AddToDDOLManager", AddToDDOLManager);
 		L.RegFunction("CreateChild", CreateChild);
 		L.RegFunction("AddChildToTarget", AddChildToTarget);
 		L.RegFunction("ChangeChildLayer", ChangeChildLayer);
@@ -22,6 +22,22 @@ public class MonoExtendUtilWrap
 	}
 
 	[MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	static int AddToDDOLRoot(IntPtr L)
+	{
+		try
+		{
+			ToLua.CheckArgsCount(L, 1);
+			UnityEngine.GameObject arg0 = (UnityEngine.GameObject)ToLua.CheckObject(L, 1, typeof(UnityEngine.GameObject));
+			MonoExtendUtil.AddToDDOLRoot(arg0);
+			return 0;
+		}
+		catch (Exception e)
+		{
+			return LuaDLL.toluaL_exception(L, e);
+		}
+	}
+
+	[MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
 	static int FindDeepChild(IntPtr L)
 	{
 		try
@@ -32,22 +48,6 @@ public class MonoExtendUtilWrap
 			UnityEngine.Transform o = MonoExtendUtil.FindDeepChild(arg0, arg1);
 			ToLua.Push(L, o);
 			return 1;
-		}
-		catch (Exception e)
-		{
-			return LuaDLL.toluaL_exception(L, e);
-		}
-	}
-
-	[MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-	static int AddToDDOLManager(IntPtr L)
-	{
-		try
-		{
-			ToLua.CheckArgsCount(L, 1);
-			UnityEngine.GameObject arg0 = (UnityEngine.GameObject)ToLua.CheckObject(L, 1, typeof(UnityEngine.GameObject));
-			MonoExtendUtil.AddToDDOLRoot(arg0);
-			return 0;
 		}
 		catch (Exception e)
 		{

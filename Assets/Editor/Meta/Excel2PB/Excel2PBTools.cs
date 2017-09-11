@@ -128,8 +128,8 @@ public class Excel2PBTools
 
         code += WriteClassTable(className);
 
-        Debug.Log("===创建excel " + className + " 文件===");
-        WriteClassFile(EXCEL_BEAN_FILE_PATH, className, code);
+        Debug.Log("===创建excel " + GetClassMetaName(className) + " 文件===");
+        WriteClassFile(EXCEL_BEAN_FILE_PATH, GetClassMetaName(className), code);
     }
 
     /// <summary>
@@ -158,8 +158,8 @@ public class Excel2PBTools
 
         code += WriteClassTable(className, clsSheetNames);
 
-        Debug.Log("===创建excel " + className + " 文件===");
-        WriteClassFile(EXCEL_BEAN_FILE_PATH, className, code);
+        Debug.Log("===创建excel " + GetClassMetaName(className) + " 文件===");
+        WriteClassFile(EXCEL_BEAN_FILE_PATH, GetClassMetaName(className), code);
     }
 
     private static string WriteClass(DataTable dt, string className)
@@ -167,7 +167,7 @@ public class Excel2PBTools
         string code = "";
 
         code += "[ProtoContract]\n";
-        code += "public class " + className + "\n";
+        code += "public class " + GetClassMetaName(className) + "\n";
         code += "{\n";
 
         int col = dt.Columns.Count;
@@ -202,7 +202,7 @@ public class Excel2PBTools
         }
 
         code += "\n";
-        code += "    public " + className + "()\n";
+        code += "    public " + GetClassMetaName(className) + "()\n";
         code += "    {}\n";
         code += "}\n\n\n";
 
@@ -214,20 +214,21 @@ public class Excel2PBTools
         string code = "";
 
 		code += "[ProtoContract]\n";
-		code += "public class " + className + "Meta\n";
+        code += "public class " + GetClassTableName(className) + "\n";
 		code += "{\n";
 
 		int priority1 = 1;
 		code += "    [ProtoMember(" + (priority1) + ")]\n";
-		code += "    public Dictionary<int, " + className + "> " + className + "Dic = new Dictionary<int, " + className + ">();\n\n";
+        code += "    public Dictionary<int, " + GetClassMetaName(className) + "> " + GetClassMetaName(className) 
+            + "Dic = new Dictionary<int, " + GetClassMetaName(className) + ">();\n\n";
 
 		code += "    public T GetMetaValue<T>(int id) where T : class\n";
 		code += "    {\n";
-		code += "        return " + className + "Dic[id] as T;\n";
+		code += "        return " + GetClassMetaName(className) + "Dic[id] as T;\n";
 		code += "    }\n\n";
 
 		code += "\n";
-		code += "    public " + className + "Meta()\n";
+		code += "    public " + GetClassTableName(className) + "()\n";
 		code += "    {}\n";
 		code += "}\n";
 
@@ -247,7 +248,8 @@ public class Excel2PBTools
 		{
 			string clsName = clsSheetNames[i];
 			code += "    [ProtoMember(" + (priority1++) + ")]\n";
-			code += "    public Dictionary<int, " + clsName + "> " + clsName + "Dic = new Dictionary<int, " + clsName + ">();\n\n";
+            code += "    public Dictionary<int, " + GetClassMetaName(clsName) + "> " + GetClassMetaName(clsName) 
+                + "Dic = new Dictionary<int, " + GetClassMetaName(clsName) + ">();\n\n";
 		}
 
 		code += WriteClassFucntion(clsSheetNames);
@@ -282,9 +284,9 @@ public class Excel2PBTools
             for (int i = 0; i < clsSheetNames.Count; i++)
             {
                 string clsName = clsSheetNames[i];
-                code += "        if (type == typeof(" + clsName + "))\n";
+                code += "        if (type == typeof(" + GetClassMetaName(clsName) + "))\n";
                 code += "        {\n";
-                code += "            return " + clsName + "Dic;\n";
+                code += "            return " + GetClassMetaName(clsName) + "Dic;\n";
                 code += "        }\n";
             }
         }
@@ -320,13 +322,13 @@ public class Excel2PBTools
 
             code += "        if (type == typeof(" + clsTabName + "))\n";
             code += "        {\n";
-            code += "                " + clsTabInsName + " = DataLoader<"+ clsTabName + ">.LoadPBData(type.FullName);\n";
-            code += "                return;\n";
+            code += "            " + clsTabInsName + " = DataLoader<"+ clsTabName + ">.LoadPBData(type.FullName);\n";
+            code += "            return;\n";
             code += "        }\n";
 		}
         code += "    }\n\n";
 
-        code += "    public TM GetMetaBean<T, TM>(int id)\n";
+        code += "    public TM GetMeta<T, TM>(int id)\n";
         code += "        where T : class\n";
 	    code += "        where TM : class\n";
 	    code += "    {\n";
@@ -335,13 +337,14 @@ public class Excel2PBTools
         {
 			string clsTabName = GetClassTableName(className);
 			string clsTabInsName = GetClassTableInstName(className);
+
             code += "        if (type == typeof(" + clsTabName + "))\n";
             code += "        {\n";
-            code += "                if (" + clsTabInsName + " == null)\n";
-            code += "                {\n";
-            code += "                        LoadMeta<" + clsTabName + ">();\n";
-            code += "                }\n";
-            code += "                return " + clsTabInsName + ".GetMetaValue<TM>(id) as TM;\n";
+            code += "             if (" + clsTabInsName + " == null)\n";
+            code += "             {\n";
+            code += "                 LoadMeta<" + clsTabName + ">();\n";
+            code += "             }\n";
+            code += "             return " + clsTabInsName + ".GetMetaValue<TM>(id) as TM;\n";
             code += "        }\n";
         }
         code += "        return null;\n";
@@ -356,8 +359,7 @@ public class Excel2PBTools
     public static void GenerateXlsx2Bin()
     {
         Debug.Log("===开始读取excel数据===");
-        
-        //PropertyData proertyData = new PropertyData();
+
         List<FileInfo> files = getExcelFiles();
         foreach (FileInfo file in files)
         {
@@ -368,7 +370,7 @@ public class Excel2PBTools
             string fileName = Path.GetFileNameWithoutExtension(file.Name);
             string[] names = fileName.Split('#');
             string className = GetClassName(names[1]);
-            string typeName = className + "Meta";
+            string typeName = GetClassTableName(className);
 
             Type t = GetType(typeName);
             object metaObj = Activator.CreateInstance(t);
@@ -382,7 +384,7 @@ public class Excel2PBTools
             // 判断是否有多个sheet
             if(tables.Count > 1)
             {
-                ReadMultiTableClass(tables, metaObj, className);
+                ReadMultiTableClass(tables, metaObj);
             }else
             {
                 ReadOneTableClass(tables[0], metaObj, className);
@@ -415,7 +417,7 @@ public class Excel2PBTools
 		return null;
 	}
 
-    private static void ReadMultiTableClass(DataTableCollection tables, object classObj, string className)
+    private static void ReadMultiTableClass(DataTableCollection tables, object classObj)
     {
         foreach (DataTable dt in tables)
         {
@@ -430,7 +432,7 @@ public class Excel2PBTools
         int col = dt.Columns.Count;
 
         // 获取field字段
-        FieldInfo field = classObj.GetType().GetField(className + "Dic");
+        FieldInfo field = classObj.GetType().GetField(GetClassMetaName(className) + "Dic");
         object fieldVal = field.GetValue(classObj);
 
         IDictionary clsDic = fieldVal as IDictionary;
@@ -569,9 +571,14 @@ public class Excel2PBTools
 		return null;
 	}
 
-    private static string GetClassTableName(string name)
+    private static string GetClassMetaName(string name)
     {
         return string.Format("{0}Meta", name);
+    }
+
+    private static string GetClassTableName(string name)
+    {
+        return string.Format("{0}Table", GetClassMetaName(name));
     }
 
     private static string GetClassTableInstName(string name)

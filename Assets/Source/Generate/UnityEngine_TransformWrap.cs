@@ -26,7 +26,6 @@ public class UnityEngine_TransformWrap
 		L.RegFunction("GetSiblingIndex", GetSiblingIndex);
 		L.RegFunction("Find", Find);
 		L.RegFunction("IsChildOf", IsChildOf);
-		L.RegFunction("FindChild", FindChild);
 		L.RegFunction("GetEnumerator", GetEnumerator);
 		L.RegFunction("GetChild", GetChild);
 		L.RegFunction("__eq", op_Equality);
@@ -636,24 +635,6 @@ public class UnityEngine_TransformWrap
 			UnityEngine.Transform arg0 = (UnityEngine.Transform)ToLua.CheckObject<UnityEngine.Transform>(L, 2);
 			bool o = obj.IsChildOf(arg0);
 			LuaDLL.lua_pushboolean(L, o);
-			return 1;
-		}
-		catch (Exception e)
-		{
-			return LuaDLL.toluaL_exception(L, e);
-		}
-	}
-
-	[MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-	static int FindChild(IntPtr L)
-	{
-		try
-		{
-			ToLua.CheckArgsCount(L, 2);
-			UnityEngine.Transform obj = (UnityEngine.Transform)ToLua.CheckObject<UnityEngine.Transform>(L, 1);
-			string arg0 = ToLua.CheckString(L, 2);
-			UnityEngine.Transform o = obj.Find(arg0);
-			ToLua.Push(L, o);
 			return 1;
 		}
 		catch (Exception e)

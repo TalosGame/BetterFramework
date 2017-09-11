@@ -2,45 +2,60 @@
 
 public class PBMetaManager : SingletonBase<PBMetaManager>
 {
-    public  FormulaMeta  formulaMeta;
+    public  FormulaMetaTable  formulaMetaTable;
 
-    public  SkillMeta  skillMeta;
+    public  AudioMetaTable  audioMetaTable;
+
+    public  SkillMetaTable  skillMetaTable;
 
     public void LoadMeta<T>()
     {
         Type type = typeof(T);
-        if (type == typeof(FormulaMeta))
+        if (type == typeof(FormulaMetaTable))
         {
-                formulaMeta = DataLoader<FormulaMeta>.LoadPBData(type.FullName);
-                return;
+            formulaMetaTable = MetaLoader<FormulaMetaTable>.LoadPBData(type.FullName);
+            return;
         }
-        if (type == typeof(SkillMeta))
+        if (type == typeof(AudioMetaTable))
         {
-                skillMeta = DataLoader<SkillMeta>.LoadPBData(type.FullName);
-                return;
+            audioMetaTable = MetaLoader<AudioMetaTable>.LoadPBData(type.FullName);
+            return;
+        }
+        if (type == typeof(SkillMetaTable))
+        {
+            skillMetaTable = MetaLoader<SkillMetaTable>.LoadPBData(type.FullName);
+            return;
         }
     }
 
-    public TM GetMetaBean<T, TM>(int id)
+    public TM GetMeta<T, TM>(int id)
         where T : class
         where TM : class
     {
         Type type = typeof(T);
-        if (type == typeof(FormulaMeta))
+        if (type == typeof(FormulaMetaTable))
         {
-                if (formulaMeta == null)
-                {
-                        LoadMeta<FormulaMeta>();
-                }
-                return formulaMeta.GetMetaValue<TM>(id) as TM;
+             if (formulaMetaTable == null)
+             {
+                 LoadMeta<FormulaMetaTable>();
+             }
+             return formulaMetaTable.GetMetaValue<TM>(id) as TM;
         }
-        if (type == typeof(SkillMeta))
+        if (type == typeof(AudioMetaTable))
         {
-                if (skillMeta == null)
-                {
-                        LoadMeta<SkillMeta>();
-                }
-                return skillMeta.GetMetaValue<TM>(id) as TM;
+             if (audioMetaTable == null)
+             {
+                 LoadMeta<AudioMetaTable>();
+             }
+             return audioMetaTable.GetMetaValue<TM>(id) as TM;
+        }
+        if (type == typeof(SkillMetaTable))
+        {
+             if (skillMetaTable == null)
+             {
+                 LoadMeta<SkillMetaTable>();
+             }
+             return skillMetaTable.GetMetaValue<TM>(id) as TM;
         }
         return null;
     }

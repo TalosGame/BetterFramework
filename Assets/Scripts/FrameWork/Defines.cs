@@ -213,7 +213,7 @@ public class ABConfiger
         string filePath = GetSandboxABFilePath(fileName);
         if (MLFileUtil.CheckFileExits(filePath))
         {
-            Debug.Log("Find sandbox ABFile path====" + filePath);
+            //Debug.Log("Find sandbox ABFile path====" + filePath);
             return filePath;
         }
 
@@ -224,7 +224,7 @@ public class ABConfiger
 #if !UNITY_ANDROID
         if (MLFileUtil.CheckFileExits(filePath))
         {
-            Debug.Log("Find local ABFile path====" + filePath);
+            //Debug.Log("Find local ABFile path====" + filePath);
             return filePath;
         }
 #else
