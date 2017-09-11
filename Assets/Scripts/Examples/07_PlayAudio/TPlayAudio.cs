@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class TPlaySound : MonoBehaviour 
+public class TPlayAudio : MonoBehaviour 
 {
 	private const string PLAY_BG_MUSIC_TEXT = "播放背景音乐";
     private const string STOP_BG_MUSIC_TEXT = "停止背景音乐";
