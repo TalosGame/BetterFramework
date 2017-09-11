@@ -1000,36 +1000,6 @@ public sealed class LuaHelper
             return;
         tt.mainTexture = t;
     }
-
-    /// <summary>
-    /// 用于下载微信头像并给图片赋值
-    /// </summary>
-    /// <param name="go">Go.</param>
-    /// <param name="url">URL.</param>
-    public static void SetWWWTexture(GameObject go, string url)
-    {
-        UITexture ut;
-        if (go != null)
-        {
-            ut = MonoExtendUtil.GetOrAddComponent<UITexture>(go);
-            CoroutineManger.Instance.StartCoroutine(WWWTextureManager.Instance.LoadTexture(url, delegate(Texture2D obj) {
-                if (obj != null)
-                {
-                    ut.mainTexture = obj;
-                }
-            }));
-        }
-    }
-
-    public static void UnLoadAllTextures ()
-    {
-        WWWTextureManager.Instance.UnLoadAllTextures();
-    }
-
-    public static void UnLoadTexture (string url)
-    {
-        WWWTextureManager.Instance.UnLoadTexture(url);
-    }
     #endregion
 
     #region NetWork interface

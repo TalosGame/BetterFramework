@@ -88,9 +88,6 @@ public class LuaHelperWrap
 		L.RegFunction("AddExResourcePath", AddExResourcePath);
 		L.RegFunction("LoadUIItem", LoadUIItem);
 		L.RegFunction("LoadUITexture", LoadUITexture);
-		L.RegFunction("SetWWWTexture", SetWWWTexture);
-		L.RegFunction("UnLoadAllTextures", UnLoadAllTextures);
-		L.RegFunction("UnLoadTexture", UnLoadTexture);
 		L.RegFunction("StartSendHeartMsg", StartSendHeartMsg);
 		L.RegFunction("ConnectServer", ConnectServer);
 		L.RegFunction("ReConnection", ReConnection);
@@ -1594,54 +1591,6 @@ public class LuaHelperWrap
 			UnityEngine.GameObject arg0 = (UnityEngine.GameObject)ToLua.CheckObject(L, 1, typeof(UnityEngine.GameObject));
 			string arg1 = ToLua.CheckString(L, 2);
 			LuaHelper.LoadUITexture(arg0, arg1);
-			return 0;
-		}
-		catch (Exception e)
-		{
-			return LuaDLL.toluaL_exception(L, e);
-		}
-	}
-
-	[MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-	static int SetWWWTexture(IntPtr L)
-	{
-		try
-		{
-			ToLua.CheckArgsCount(L, 2);
-			UnityEngine.GameObject arg0 = (UnityEngine.GameObject)ToLua.CheckObject(L, 1, typeof(UnityEngine.GameObject));
-			string arg1 = ToLua.CheckString(L, 2);
-			LuaHelper.SetWWWTexture(arg0, arg1);
-			return 0;
-		}
-		catch (Exception e)
-		{
-			return LuaDLL.toluaL_exception(L, e);
-		}
-	}
-
-	[MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-	static int UnLoadAllTextures(IntPtr L)
-	{
-		try
-		{
-			ToLua.CheckArgsCount(L, 0);
-			LuaHelper.UnLoadAllTextures();
-			return 0;
-		}
-		catch (Exception e)
-		{
-			return LuaDLL.toluaL_exception(L, e);
-		}
-	}
-
-	[MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-	static int UnLoadTexture(IntPtr L)
-	{
-		try
-		{
-			ToLua.CheckArgsCount(L, 1);
-			string arg0 = ToLua.CheckString(L, 1);
-			LuaHelper.UnLoadTexture(arg0);
 			return 0;
 		}
 		catch (Exception e)
