@@ -152,7 +152,7 @@ public abstract class AudioManager<T, TD> : MonoBehaviour
         }
 
 		// 根据声音类型判断是否可以播放
-        AudioType type = GetAudioType(audioId);
+		AudioType type = GetAudioType(audioId);
 		bool isNeedPlay = true;
 		if (type == AudioType.Music)
 		{

@@ -1,7 +1,4 @@
 ﻿using UnityEngine;
-using System;
-using System.Collections;
-using LuaInterface;
 
 #region delegate 框架内全局定义等委托函数
 // 对象状态改变委托

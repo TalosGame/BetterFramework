@@ -38,6 +38,7 @@ public sealed class GameConst
     public const string NOTIFY_HANDLE_CONNECT_SUCESS = "handle_connect_sucess";
     public const string NOTIFY_HANDLE_UI_LOAD_PROCESS = "handle_ui_load_process";
     public const string NOTIFY_HANDLE_UI_LOADING_COMPLETE = "handle_ui_loading_complete";
+    public const string NOTIFY_HANDLE_BUY_COIN = "notify_handle_buy_coin";
 
     // PlayerPrefs Const
     public const string SETTING_LANGUAGE_CHOOSE = "SETTING_LANGUAGE_CHOOSE";

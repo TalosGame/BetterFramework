@@ -44,7 +44,7 @@ public class TLoadResources : MonoBehaviour
 
     private void LoadSyncRoleTex()
     {
-		roleTexObj = MLResourceManager.Instance.LoadInstance("RoleTex", GameResourceType.RES_ROLE_TEXTURES) as GameObject;
+        roleTexObj = MLResourceManager.Instance.LoadInstance("RoleTex", GameResourceType.RES_ROLE) as GameObject;
 		roleTexObj.transform.localScale = new Vector3(1.3f, 1.3f, 1f);
     }
 
@@ -54,7 +54,7 @@ public class TLoadResources : MonoBehaviour
         {
             roleTexObj = obj as GameObject;
             roleTexObj.transform.localScale = new Vector3(1.3f, 1.3f, 1f);
-        }, GameResourceType.RES_ROLE_TEXTURES);
+        }, GameResourceType.RES_ROLE);
     }
 
     private IEnumerator CleanRoleTexCor(Action action)

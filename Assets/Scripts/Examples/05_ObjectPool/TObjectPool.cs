@@ -78,6 +78,11 @@ public class TObjectPool : MonoBehaviour
     private void SpawnObject()
     {
 		TestObjectItem objectItem = poolMgr.Spawn<TestObjectItem>(POOL_ITEM_NAME);
+        if(objectItem == null)
+        {
+            Debug.LogWarning("Can't spawn object item!!");
+            return;
+        }
 
         int itemNum = 0;
         if(liveObjects.Count != 0)
@@ -108,7 +113,7 @@ public class TObjectPool : MonoBehaviour
 			return;
 
 		poolMgr.DespawnAll<TestObjectItem>(POOL_ITEM_NAME);
-		liveObjects.Clear();   
+		liveObjects.Clear();
     }
 
 

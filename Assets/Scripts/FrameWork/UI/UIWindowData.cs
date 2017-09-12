@@ -41,6 +41,8 @@ public struct ShowWindowData
 	public bool checkNavigation;
 	// 是否隐藏所有窗口
 	public bool hideAllOtherWindow;
+	// 额外数据
+	public object param;
 
 	static public ShowWindowData Create()
 	{
@@ -50,6 +52,7 @@ public struct ShowWindowData
 		data.executeNavLogic = true;
 		data.checkNavigation = false;
 		data.hideAllOtherWindow = true;
+        data.param = null;
 
 		return data;
 	}

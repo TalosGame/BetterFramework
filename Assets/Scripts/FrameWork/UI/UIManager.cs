@@ -7,6 +7,7 @@ public class UIWindowID
 {
 	public const int WINDOWID_INVAILD = 0;                              // 不合法窗口
 	public const int WINDOWID_HOT_RES_LOADING = WINDOWID_INVAILD + 1;   // 热更新资源loading界面
+    public const int WINDOWID_MESSAGE_BOX = 300;                        // 系统messageBox
 }
 
 /// <summary>
@@ -89,17 +90,17 @@ public class UIManager : MonoSingleton<UIManager>
 	}
 	protected CompareBaseWindow compareWindowFun = new CompareBaseWindow();
 
-    protected override void Init()
-    {
-        // 初始化ui windows资源定义        
-        ResourceDefine resDefine = MLResourceManager.Instance.ResourceDefine;
-        if (resDefine == null)
-        {
-            return;
-        }
+	protected override void Init()
+	{
+		// 初始化ui windows资源定义        
+		ResourceDefine resDefine = MLResourceManager.Instance.ResourceDefine;
+		if (resDefine == null)
+		{
+			return;
+		}
 
-        resDefine.InitUIWindows();
-    }
+		resDefine.InitUIWindows();
+	}
 
 	void Awake()
 	{
@@ -200,7 +201,7 @@ public class UIManager : MonoSingleton<UIManager>
 		UIWindowBase baseWindow = ReadyToShowWindow(id, data);
 		if (baseWindow != null)
 		{
-			RealShowWindow(baseWindow);
+			RealShowWindow(baseWindow, data);
 		}
 	}
 
@@ -213,9 +214,9 @@ public class UIManager : MonoSingleton<UIManager>
 			backSequence.Clear();
 	}
 
-	private void RealShowWindow(UIWindowBase baseWindow)
+	private void RealShowWindow(UIWindowBase baseWindow, ShowWindowData ?data = null)
 	{
-		baseWindow.ShowWindow();
+        baseWindow.ShowWindow(data);
 		showWindows [baseWindow.WindowID] = baseWindow;
 
 		if (baseWindow.IsNavigationWindow)

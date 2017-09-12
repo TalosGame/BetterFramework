@@ -9,8 +9,10 @@
 /// </summary>
 public class GameWindowID : UIWindowID
 {
-    // 转菊花通用窗口ID
-    public const int WINDOWID_CONNECT = 20;
+    public const int WINDOWID_MAIN_MENU = WINDOWID_HOT_RES_LOADING + 1;
+    public const int WINDOWID_MAIN_GAME = WINDOWID_MAIN_MENU + 1;
+    public const int WINDOWID_COIN_SHOP = WINDOWID_MAIN_GAME + 1;
+    public const int WINDOWID_USER_INFO_BAR = WINDOWID_COIN_SHOP + 1;
 }
 
 /// <summary>
@@ -20,7 +22,6 @@ public class GameResourceType : ResourceType
 {
     // 人物贴图资源
     public const int RES_ROLE = RES_LUA + 1;
-	public const int RES_ROLE_TEXTURES = RES_ROLE + 1;
 }
 
 public class GameResDefine : ResourceDefine
@@ -29,9 +30,17 @@ public class GameResDefine : ResourceDefine
     {
 		//注册窗口ID
 		RegisterWindow(UIWindowID.WINDOWID_HOT_RES_LOADING);
+        RegisterWindow(GameWindowID.WINDOWID_MAIN_MENU);
+        RegisterWindow(GameWindowID.WINDOWID_MAIN_GAME);
+        RegisterWindow(GameWindowID.WINDOWID_COIN_SHOP);
+        RegisterWindow(GameWindowID.WINDOWID_USER_INFO_BAR);
 
 		// 注册窗口资源路径
 		AddExUIWindow(UIWindowID.WINDOWID_HOT_RES_LOADING, "NormalWindow/UIHotUpLoading");
+        AddExUIWindow(GameWindowID.WINDOWID_MAIN_MENU, "NormalWindow/CSMainMenu");
+        AddExUIWindow(GameWindowID.WINDOWID_MAIN_GAME, "NormalWindow/CSMainGame");
+        AddExUIWindow(GameWindowID.WINDOWID_COIN_SHOP, "PopUpWindow/CSCoinShop");
+        AddExUIWindow(GameWindowID.WINDOWID_USER_INFO_BAR, "FixedWidow/CSUserInfoBar");
 	}
 
     public override void InitResPaths()
@@ -43,7 +52,6 @@ public class GameResDefine : ResourceDefine
 		AddExResourcePath(ResourceType.RES_LUA, "lua");
 
         AddExResourcePath(GameResourceType.RES_ROLE, "Role");
-		AddExResourcePath(GameResourceType.RES_ROLE_TEXTURES, "RoleTextures");
 
         // TODO add other res path
 	}

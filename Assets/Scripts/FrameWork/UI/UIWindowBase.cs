@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using LuaInterface;
 
 public abstract class UIWindowBase : MonoBehaviour
 {
@@ -35,7 +36,7 @@ public abstract class UIWindowBase : MonoBehaviour
 	// 窗口打开方式
 	public WindowShowStyle showStyle = WindowShowStyle.Normal;
 
-	// 窗口打开或关闭Date
+	// 窗口打开或关闭时间
 	public float duration = 0.2f;
 
 	// 移动到某个点
@@ -84,7 +85,7 @@ public abstract class UIWindowBase : MonoBehaviour
 		get
 		{
 			if (this.windowID == UIWindowID.WINDOWID_INVAILD)
-				Debug.LogError("window id is " + UIWindowID.WINDOWID_INVAILD);
+				Debugger.LogError("window id is " + UIWindowID.WINDOWID_INVAILD);
 
 			return windowID;
 		}
@@ -160,7 +161,7 @@ public abstract class UIWindowBase : MonoBehaviour
 	/// <summary>
 	/// 打开窗口
 	/// </summary>
-	public void ShowWindow()
+	public void ShowWindow(ShowWindowData ?data = null)
 	{
 		isShown = true;
 		IsLock = true;
@@ -168,11 +169,11 @@ public abstract class UIWindowBase : MonoBehaviour
 		StartShowWindow (true, () => {
 			isLock = false;
 
-			OnShowWindow();
+			OnShowWindow(data);
 		});
 	}
 
-	protected virtual void OnShowWindow()
+	protected virtual void OnShowWindow(ShowWindowData ?data = null)
 	{
 
 	}

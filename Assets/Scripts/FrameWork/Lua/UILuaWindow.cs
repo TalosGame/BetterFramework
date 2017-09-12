@@ -86,10 +86,10 @@ public class UILuaWindow : UIWindowBase
 		//Debugger.Log ("windowId===" + this.WindowID);
 	}
 
-	protected override void OnShowWindow ()
-	{
-		CallMethod(ON_SHOW_WINDOW);
-	}
+    protected override void OnShowWindow(ShowWindowData? data = null)
+    {
+        CallMethod(ON_SHOW_WINDOW);
+    }
 
 	protected override void OnHideWindow ()
 	{

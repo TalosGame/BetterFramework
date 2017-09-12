@@ -58,7 +58,7 @@ public abstract class MLPoolBase
         int freeObjCnt = FreeObjectsCount;
         int useObjCnt = UsedObjectsCount;
 
-		if (freeObjCnt + useObjCnt >= limitAmount && limitInstances)
+		if (useObjCnt >= limitAmount && limitInstances)
 		{
 			Debug.LogWarning("Can't Spawn new Instance. Cause not have enough free Object in pool!");
 			return null;
