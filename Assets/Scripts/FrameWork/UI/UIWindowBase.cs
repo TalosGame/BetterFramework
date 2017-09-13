@@ -166,18 +166,17 @@ public abstract class UIWindowBase : MonoBehaviour
 		isShown = true;
 		IsLock = true;
 
+        OnShowWindow(data);
+
 		StartShowWindow (true, () => {
 			isLock = false;
-
-			OnShowWindow(data);
-		});
+        });
 	}
 
 	protected virtual void OnShowWindow(ShowWindowData ?data = null)
 	{
 
 	}
-
 	#endregion
 
 	#region 关闭窗口
@@ -203,16 +202,16 @@ public abstract class UIWindowBase : MonoBehaviour
 		IsLock = false;
 		isShown = false;
 
-		StartShowWindow(false, ()=>
-			{
-				IsLock = true;
-				if(action != null)
-				{
-					action();
-				}
+		StartShowWindow(false, ()=>{
+			IsLock = true;
 
-				OnHideWindow();
-			});
+			if(action != null)
+			{
+				action();
+			}
+
+			OnHideWindow();
+		});
 	}
 
 	protected virtual void OnHideWindow(){

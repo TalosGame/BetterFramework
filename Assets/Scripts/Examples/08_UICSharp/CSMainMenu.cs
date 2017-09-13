@@ -22,6 +22,7 @@ public class CSMainMenu : UIWindowBase
         UIManager.Instance.ShowWindow(GameWindowID.WINDOWID_MAIN_GAME);
 
         // DestoryOtherWindow 包括固定窗口
+        // 这里尝试给另外一个窗口传递参数
         ShowWindowData winData = ShowWindowData.Create();
         winData.param = CSUserManager.Instance.GetUserCoin();
 		UIManager.Instance.ShowWindow(GameWindowID.WINDOWID_USER_INFO_BAR, winData);

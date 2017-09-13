@@ -261,7 +261,6 @@ public class UIManager : MonoSingleton<UIManager>
 			GameObject uiObject = MLResourceManager.Instance.LoadInstance(prefabPath, ResourceType.RES_UI) as GameObject;
 			if(uiObject != null)
 			{
-				//NGUITools.SetActive(uiObject, false);
 				baseWindow = uiObject.GetComponent<UIWindowBase>();
 
 				// 检查窗口id
@@ -522,6 +521,7 @@ public class UIManager : MonoSingleton<UIManager>
                 {
                     needDepth = Mathf.Clamp(MonoExtendUtil.GetMaxTargetDepth(uiPopUpWindowRoot.gameObject) + 1, POPUP_WINDOW_DEPTH, int.MaxValue);
                 }
+
 				//Debug.Log("[UIWindowType.PopUp] maxDepth is " + needDepth);
 			}
 			break;
