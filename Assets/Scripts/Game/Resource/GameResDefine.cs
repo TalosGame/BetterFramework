@@ -14,6 +14,7 @@ public class GameWindowID : UIWindowID
     public const int WINDOWID_COIN_SHOP = WINDOWID_MAIN_GAME + 1;
     public const int WINDOWID_USER_INFO_BAR = WINDOWID_COIN_SHOP + 1;
     public const int WINDOWID_PLAYER_SCORE = WINDOWID_USER_INFO_BAR + 1;
+    public const int WINDOWID_MESSAGE_BOX = WINDOWID_PLAYER_SCORE + 1;
 }
 
 /// <summary>
@@ -36,14 +37,19 @@ public class GameResDefine : ResourceDefine
         RegisterWindow(GameWindowID.WINDOWID_COIN_SHOP);
         RegisterWindow(GameWindowID.WINDOWID_USER_INFO_BAR);
         RegisterWindow(GameWindowID.WINDOWID_PLAYER_SCORE);
+        RegisterWindow(GameWindowID.WINDOWID_MESSAGE_BOX);
 
 		// 注册窗口资源路径
 		AddExUIWindow(UIWindowID.WINDOWID_HOT_RES_LOADING, "NormalWindow/UIHotUpLoading");
         AddExUIWindow(GameWindowID.WINDOWID_MAIN_MENU, "NormalWindow/CSMainMenu");
         AddExUIWindow(GameWindowID.WINDOWID_MAIN_GAME, "NormalWindow/CSMainGame");
-        AddExUIWindow(GameWindowID.WINDOWID_COIN_SHOP, "PopUpWindow/CSCoinShop");
-        AddExUIWindow(GameWindowID.WINDOWID_USER_INFO_BAR, "FixedWidow/CSUserInfoBar");
         AddExUIWindow(GameWindowID.WINDOWID_PLAYER_SCORE, "NormalWindow/CSPlayerScore");
+
+        AddExUIWindow(GameWindowID.WINDOWID_COIN_SHOP, "PopUpWindow/CSCoinShop");
+
+        AddExUIWindow(GameWindowID.WINDOWID_USER_INFO_BAR, "FixedWidow/CSUserInfoBar");
+
+        AddExUIWindow(GameWindowID.WINDOWID_MESSAGE_BOX, "CustomWindow/CSMsgBox");
 	}
 
     public override void InitResPaths()
