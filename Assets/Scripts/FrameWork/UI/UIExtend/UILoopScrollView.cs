@@ -20,7 +20,7 @@ public class UILoopScrollView : UIScrollView
     /// <summary>
     /// 单元格预制名称
     /// </summary>
-    public string prefabName;
+    public string itemPrefabPath;
 
     /// <summary>
     /// 最多创建单元格预制数
@@ -164,10 +164,10 @@ public class UILoopScrollView : UIScrollView
         if (preloadItemComplete)
             return;
         Queue<GameObject> cacheItems = null;
-        if(!cacheItemDic.TryGetValue(prefabName, out cacheItems))
+        if(!cacheItemDic.TryGetValue(itemPrefabPath, out cacheItems))
         {
             cacheItems = new Queue<GameObject>();
-            cacheItemDic.Add(prefabName, cacheItems);
+            cacheItemDic.Add(itemPrefabPath, cacheItems);
         }
 
         if(cacheItems.Count >= maxGridNum)
@@ -176,12 +176,15 @@ public class UILoopScrollView : UIScrollView
             return;
         }
 
-        GameObject template = MonoExtendUtil.FindDeepChild(this.gameObject, prefabName).gameObject;
-        template.SetActive(false);
-
         for (int i = 0; i < maxGridNum; i++)
         {
-            GameObject cell = MonoExtendUtil.CreateChild(cacheItemRoot.gameObject, template);
+            GameObject cell = MLResourceManager.Instance.LoadInstance(itemPrefabPath, ResourceType.RES_UI) as GameObject;
+            if(cell == null)
+            {
+                Debug.LogError("Load grid item error! item path:" + itemPrefabPath);
+                break;
+            }
+
             cell.SetActive(false);
             cell.name = cell.name + i;
 
@@ -272,7 +275,7 @@ public class UILoopScrollView : UIScrollView
         }
 
         Queue<GameObject> cacheItems = null;
-        if(!cacheItemDic.TryGetValue(prefabName, out cacheItems))
+        if(!cacheItemDic.TryGetValue(itemPrefabPath, out cacheItems))
         {
             return;
         }
@@ -403,7 +406,7 @@ public class UILoopScrollView : UIScrollView
         }
 
         Queue<GameObject> cacheItems = null;
-        if (!cacheItemDic.TryGetValue(prefabName, out cacheItems))
+        if (!cacheItemDic.TryGetValue(itemPrefabPath, out cacheItems))
         {
             return;
         }

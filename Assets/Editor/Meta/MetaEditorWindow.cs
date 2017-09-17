@@ -3,10 +3,6 @@ using UnityEditor;
 
 public class MetaEditorWindow : EditorWindow
 {
-    private static Vector2 WINDOW_SIZE = new Vector2(320, 120);
-
-    private const string EDITOR_WINDOW_NAME = "MetaEditor";
-
     private const string LAB_EXCEL_TO_META_TYPE = "Excel2Meta type:";
     private const string LAB_EXCEL_PATH = "Excel files path:";
     private const string LAB_META_BEAN_PATH = "Meta class path:";
@@ -15,12 +11,6 @@ public class MetaEditorWindow : EditorWindow
     private const string LAB_EXPORT_EXCEL_META = "Export excels to meta";
 
     private MetaEditorData editorData = null;
-
-    [MenuItem("MLTools/MetaUtil/MetaEditorWindow", false, 1)]
-    public static void OpenMetaEditorWindow()
-    {
-        GUIHelper.OpenEditorWindow<MetaEditorWindow>(EDITOR_WINDOW_NAME, WINDOW_SIZE);
-    }
 
     void OnEnable()
     {
