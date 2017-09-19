@@ -102,7 +102,7 @@ public class UIBetterGrid : MonoBehaviour
 	/// Callback that will be called every time an item needs to have its content updated.
 	/// The 'wrapIndex' is the index within the child list, and 'realIndex' is the index using position logic.
 	/// </summary>
-    public delegate void OnUpdateGrid(GameObject go, int realIndex);
+	public delegate void OnUpdateGrid(UIGridItem go, int realIndex);
 
 	public OnUpdateGrid onUpdateGrid;
 
@@ -532,7 +532,7 @@ public class UIBetterGrid : MonoBehaviour
 
 		if (onUpdateGrid != null)
 		{
-            onUpdateGrid(item.gameObject, index);
+			onUpdateGrid(gridItem, index);
 		}
 	}
 }

@@ -160,10 +160,25 @@ public class LuaHelperWrap
 	{
 		try
 		{
-			ToLua.CheckArgsCount(L, 1);
-			int arg0 = (int)LuaDLL.luaL_checknumber(L, 1);
-			LuaHelper.ShowWindow(arg0);
-			return 0;
+			int count = LuaDLL.lua_gettop(L);
+
+			if (count == 1 && TypeChecker.CheckTypes<int>(L, 1))
+			{
+				int arg0 = (int)LuaDLL.lua_tonumber(L, 1);
+				LuaHelper.ShowWindow(arg0);
+				return 0;
+			}
+			else if (count == 2 && TypeChecker.CheckTypes<int, LuaInterface.LuaTable>(L, 1))
+			{
+				int arg0 = (int)LuaDLL.lua_tonumber(L, 1);
+				LuaTable arg1 = ToLua.ToLuaTable(L, 2);
+				LuaHelper.ShowWindow(arg0, arg1);
+				return 0;
+			}
+			else
+			{
+				return LuaDLL.luaL_throw(L, "invalid arguments to method: LuaHelper.ShowWindow");
+			}
 		}
 		catch (Exception e)
 		{

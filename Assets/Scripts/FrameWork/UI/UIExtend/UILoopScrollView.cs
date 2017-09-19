@@ -1,11 +1,12 @@
 ﻿using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 using LuaInterface;
 
 public class UILoopScrollView : UIScrollView 
 {
     ///------------------delegate 相关----------------------------///
-    public delegate void OnContentClick(GameObject scrollView, GameObject item, GameObject target);
+	public delegate void OnContentClick(GameObject scrollView, GameObject item, object data);
 
     public OnContentClick onContentClick;
 
@@ -73,6 +74,7 @@ public class UILoopScrollView : UIScrollView
         get { return grid; }
     }
 
+    private List<UIGridItem> items = new List<UIGridItem>(); 
 
     public bool resetPos = true;
     public bool DragLastIndex = false;
@@ -144,16 +146,21 @@ public class UILoopScrollView : UIScrollView
         resetPos = false;
     }
 
-    public void RemoveData(LuaTable v)
+    public void ChangeData(object data)
     {
-        for (int i = 0; i < v.Length; i++)
-        {
-            object o = v.GetObjectByIndex(i);
-            RemoveData(o);
-        }
+        for (int j = 0; j < items.Count; j++)
+        { 
+            UIGridItem item = items[j];
+            if (data == item.Data)
+            { 
+                if(onContentUpdate != null)
+                {
+                    onContentUpdate(gameObject, item.gameObject, data);
+                }
 
-        loadComplete = true;
-        resetPos = false;
+                break;
+            }
+        }        
     }
 
     /// <summary>
@@ -175,16 +182,9 @@ public class UILoopScrollView : UIScrollView
             preloadItemComplete = true;
             return;
         }
-
         for (int i = 0; i < maxGridNum; i++)
         {
-            GameObject cell = MLResourceManager.Instance.LoadInstance(itemPrefabPath, ResourceType.RES_UI) as GameObject;
-            if(cell == null)
-            {
-                Debug.LogError("Load grid item error! item path:" + itemPrefabPath);
-                break;
-            }
-
+			GameObject cell = MLResourceManager.Instance.LoadInstance(itemPrefabPath, ResourceType.RES_UI) as GameObject;
             cell.SetActive(false);
             cell.name = cell.name + i;
 
@@ -192,6 +192,17 @@ public class UILoopScrollView : UIScrollView
         }
 
         preloadItemComplete = true;
+    }
+
+    private Queue<GameObject> GetCacheItems()
+    { 
+        Queue<GameObject> cacheItems = null;
+        if (!cacheItemDic.TryGetValue(itemPrefabPath, out cacheItems))
+        {
+            return null;
+        }
+
+        return cacheItems;
     }
 
     void LateUpdate()
@@ -295,8 +306,11 @@ public class UILoopScrollView : UIScrollView
             MonoExtendUtil.AddChildToTarget(grid.transform, cell.transform);
             NGUITools.SetActive(cell, true);
 
-            UIGridItem content = cell.GetOrAddComponent<UIGridItem>();
-            content.createBoxCollider();
+            UIGridItem gridItem = cell.GetOrAddComponent<UIGridItem>();
+            gridItem.Data = datas[i];
+            gridItem.createBoxCollider();
+
+            items.Add(gridItem);
         }
 
         RefreshScrollView( false );
@@ -389,6 +403,7 @@ public class UILoopScrollView : UIScrollView
             return;
 
         RecycleCacheItems();
+        items.Clear();
 
         DisableSpring();
         ResetPosition();
@@ -518,7 +533,7 @@ public class UILoopScrollView : UIScrollView
     #endregion
 
     #region 回调相关
-    void OnUpdateGrid(GameObject go, int index)
+	void OnUpdateGrid(UIGridItem item, int index)
     {
         if (index == datas.Count - 1)
         {
@@ -532,13 +547,14 @@ public class UILoopScrollView : UIScrollView
         if(onContentUpdate != null)
         {
             object data = GetData(index);
-
             if(data == null)
             {
                 return;
             }
 
-            onContentUpdate(gameObject, go, data);
+			item.Data = data;
+
+			onContentUpdate(gameObject, item.gameObject, data);
         }
     }
     #endregion

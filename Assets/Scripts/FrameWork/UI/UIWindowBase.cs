@@ -161,19 +161,19 @@ public abstract class UIWindowBase : MonoBehaviour
 	/// <summary>
 	/// 打开窗口
 	/// </summary>
-	public void ShowWindow(ShowWindowData ?data = null)
+	public void ShowWindow(object param = null)
 	{
 		isShown = true;
 		IsLock = true;
 
-        OnShowWindow(data);
+        OnShowWindow(param);
 
 		StartShowWindow (true, () => {
 			isLock = false;
         });
 	}
 
-	protected virtual void OnShowWindow(ShowWindowData ?data = null)
+	protected virtual void OnShowWindow(object param = null)
 	{
 
 	}

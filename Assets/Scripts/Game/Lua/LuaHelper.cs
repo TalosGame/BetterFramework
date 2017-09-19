@@ -21,6 +21,19 @@ public sealed class LuaHelper
         UIManager.Instance.ShowWindow(windowId);
     }
 
+	public static void ShowWindow(int windowId, LuaTable winData)
+	{
+		ShowWindowData data = ShowWindowData.Create ();
+		data.forceResetWindow = winData.RawGet<bool>("forceResetWindow");
+		data.forceClearBackSeqData = winData.RawGet<bool>("forceClearBackSeqData");
+		data.executeNavLogic = winData.RawGet<bool>("executeNavLogic");
+		data.checkNavigation = winData.RawGet<bool>("checkNavigation");
+		data.hideAllOtherWindow = winData.RawGet<bool>("hideAllOtherWindow");
+		data.param = winData["param"];
+
+		UIManager.Instance.ShowWindow(windowId, data);
+	}
+
     public static bool IsWindowShow(int windowId)
     {
         return UIManager.Instance.IsWindowShow(windowId);
@@ -581,9 +594,9 @@ public sealed class LuaHelper
         if (loopScrollView == null)
             return;
 
-        loopScrollView.onContentClick = delegate (GameObject scrollView, GameObject item, GameObject target)
+		loopScrollView.onContentClick = delegate (GameObject scrollView, GameObject item, object data)
         {
-            luaFunc.Call<GameObject, GameObject, GameObject>(scrollView, item, target);
+			luaFunc.Call<GameObject, GameObject, object>(scrollView, item, data);
         };
     }
 

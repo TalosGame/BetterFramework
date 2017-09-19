@@ -17,12 +17,11 @@ public class CSUserInfoBar : UIWindowBase
         coinLab = MonoExtendUtil.FindDeepChild<UILabel>(this.gameObject, "DynamicPanel/CoinNumLab");
     }
 
-    protected override void OnShowWindow(ShowWindowData? data = null)
+	protected override void OnShowWindow(object data = null)
     {
         if(data != null)
         {
-            ShowWindowData winData = data.Value;
-            RefreshCoin((int)winData.param);
+			RefreshCoin((int)data);
         }
 
         NotificationCenter.Instance.AddObserver(this, GameConst.NOTIFY_HANDLE_BUY_COIN, HandleBuyCoin);

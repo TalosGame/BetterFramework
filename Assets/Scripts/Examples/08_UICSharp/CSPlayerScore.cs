@@ -29,7 +29,7 @@ public class CSPlayerScore : UIWindowBase
         UIEventListener.Get(backBtn).onClick = OnBackBtnClick;
     }
 
-    protected override void OnShowWindow(ShowWindowData? data = null)
+	protected override void OnShowWindow(object param = null)
     {
         NotificationCenter.Instance.AddObserver(this, GameConst.NOTIFY_HANDLE_GET_SCORE, HandleGetScore);
     }
@@ -41,13 +41,13 @@ public class CSPlayerScore : UIWindowBase
 
     private void HandleGetScore(Notification notify)
     {
-        List<object> scores = (List<object>)notify.Object;
-        foreach(PlayerScore score in scores)
-        {
-            Debug.Log("Player socre:" + score);
-        }
+		List<object> playerScores = (List<object>)notify.Object;
+//		foreach(PlayerScore playerScore in playerScores)
+//        {
+//			Debug.Log("Player socre:" + playerScore.score);
+//        }
 
-        loopScrollView.SetData(scores);
+        loopScrollView.SetData(playerScores);
     }
 
     public void OnContentUpdate(GameObject scrollView, GameObject go, object data)
@@ -56,11 +56,9 @@ public class CSPlayerScore : UIWindowBase
 
 		UILabel label = MonoExtendUtil.FindDeepChild<UILabel>(go, "ItemLab");
         label.text = itemData.name + ": " + itemData.score;
-
-		Debug.Log("item text:" + label.text);
     }
 
-    public void OnContentClick(GameObject scrollView, GameObject item, GameObject target)
+	public void OnContentClick(GameObject scrollView, GameObject item, object data)
     {
 		UILabel label = item.GetComponentInChildren<UILabel>();
 		Debug.Log("Item name:" + label.text);

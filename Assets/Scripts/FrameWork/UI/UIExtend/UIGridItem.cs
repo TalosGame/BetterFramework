@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections;
 
 public class UIGridItem : MonoBehaviour 
 {
@@ -12,6 +13,16 @@ public class UIGridItem : MonoBehaviour
     /// 真实索引
     /// </summary>
     public int realIndex;
+
+    /// <summary>
+    /// 数据对象类
+    /// </summary>
+    private object data;
+    public object Data
+    {
+        get { return data; }
+        set { data = value; }
+    }
 
     private State mState = State.None;
 
@@ -32,13 +43,13 @@ public class UIGridItem : MonoBehaviour
         }
     }
 
-    void Awake()
-    {
-        if (scrollView == null)
-        {
-            scrollView = NGUITools.FindInParents<UILoopScrollView>(gameObject);
-        }
-    }
+	void Start()
+	{
+		if (scrollView == null)
+		{
+			scrollView = NGUITools.FindInParents<UILoopScrollView>(gameObject);
+		}
+	}
 
     public void createBoxCollider()
     {
@@ -65,6 +76,6 @@ public class UIGridItem : MonoBehaviour
     void OnClick()
     {
         if (scrollView != null && scrollView.onContentClick != null)
-            scrollView.onContentClick(scrollView.gameObject, this.gameObject, this.gameObject);
+			scrollView.onContentClick(scrollView.gameObject, this.gameObject, data);
     }
 }

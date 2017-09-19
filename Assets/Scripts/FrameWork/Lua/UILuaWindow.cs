@@ -59,36 +59,23 @@ public class UILuaWindow : UIWindowBase
 
 		CallMethod(INIT_WINDOW_DATA);
 
-        object windowId = self["windowId"];
-        if (windowId != null)
-        {
-            this.WindowID = Convert.ToInt32(windowId);    
-        }
-
-        object forceClearNavigation = self["forceClearNavigation"];
-        if (forceClearNavigation != null)
-        {
-            this.windowData.forceClearNavigation = Convert.ToBoolean(forceClearNavigation);    
-        }
-
-        object windowType = self["windowType"];
-        if (windowType != null)
-        {
-            this.windowData.windowType = (UIWindowType)Enum.Parse(typeof(UIWindowType), windowType.ToString());    
-        }
-
-        object showMode = self["showMode"];
-        if (showMode != null)
-        {
-            this.windowData.showMode = (UIWindowShowMode)Enum.Parse(typeof(UIWindowShowMode), showMode.ToString());    
-        }
+		try
+		{
+			this.WindowID = self.RawGet<int>("windowId");
+			this.windowData.forceClearNavigation = self.RawGet<bool>("forceClearNavigation");
+			this.windowData.windowType = (UIWindowType) self.RawGet<int>("windowType");
+			this.windowData.showMode = (UIWindowShowMode) self.RawGet<int> ("showMode");
+		}catch(Exception e) 
+		{
+			Debug.LogException (e);
+		}
 
 		//Debugger.Log ("windowId===" + this.WindowID);
 	}
 
-    protected override void OnShowWindow(ShowWindowData? data = null)
+	protected override void OnShowWindow(object param = null)
     {
-        CallMethod(ON_SHOW_WINDOW);
+		CallMethod(ON_SHOW_WINDOW, param);
     }
 
 	protected override void OnHideWindow ()

@@ -40,16 +40,24 @@ public class GameResDefine : ResourceDefine
         RegisterWindow(GameWindowID.WINDOWID_MESSAGE_BOX);
 
 		// 注册窗口资源路径
-		AddExUIWindow(UIWindowID.WINDOWID_HOT_RES_LOADING, "NormalWindow/UIHotUpLoading");
-        AddExUIWindow(GameWindowID.WINDOWID_MAIN_MENU, "NormalWindow/CSMainMenu");
-        AddExUIWindow(GameWindowID.WINDOWID_MAIN_GAME, "NormalWindow/CSMainGame");
-        AddExUIWindow(GameWindowID.WINDOWID_PLAYER_SCORE, "NormalWindow/CSPlayerScore");
+		#region normal window
+		AddExUIWindow(UIWindowID.WINDOWID_HOT_RES_LOADING, "NormalWindow/CSharp/UIHotUpLoading");
+		AddExUIWindow(GameWindowID.WINDOWID_MAIN_MENU, "NormalWindow/CSharp/CSMainMenu");
+		AddExUIWindow(GameWindowID.WINDOWID_MAIN_GAME, "NormalWindow/CSharp/CSMainGame");
+		AddExUIWindow(GameWindowID.WINDOWID_PLAYER_SCORE, "NormalWindow/CSharp/CSPlayerScore");
+		#endregion
 
-        AddExUIWindow(GameWindowID.WINDOWID_COIN_SHOP, "PopUpWindow/CSCoinShop");
+		#region pop up window
+		AddExUIWindow(GameWindowID.WINDOWID_COIN_SHOP, "PopUpWindow/CSharp/CSCoinShop");
+		#endregion
 
-        AddExUIWindow(GameWindowID.WINDOWID_USER_INFO_BAR, "FixedWidow/CSUserInfoBar");
+		#region fixed window
+		AddExUIWindow(GameWindowID.WINDOWID_USER_INFO_BAR, "FixedWidow/CSharp/CSUserInfoBar");
+		#endregion
 
-        AddExUIWindow(GameWindowID.WINDOWID_MESSAGE_BOX, "CustomWindow/CSMsgBox");
+		#region custom window
+		AddExUIWindow(GameWindowID.WINDOWID_MESSAGE_BOX, "CustomWindow/CSharp/CSMsgBox");
+		#endregion
 	}
 
     public override void InitResPaths()

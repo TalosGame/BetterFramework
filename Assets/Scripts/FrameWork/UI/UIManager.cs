@@ -216,7 +216,14 @@ public class UIManager : MonoSingleton<UIManager>
 
 	private void RealShowWindow(UIWindowBase baseWindow, ShowWindowData ?data = null)
 	{
-        baseWindow.ShowWindow(data);
+		object param = null;
+		if(data != null)
+		{
+			ShowWindowData winData = data.Value;
+			param = winData.param;
+		}
+
+		baseWindow.ShowWindow(param);
 		showWindows [baseWindow.WindowID] = baseWindow;
 
 		if (baseWindow.IsNavigationWindow)
@@ -760,8 +767,6 @@ public class UIManager : MonoSingleton<UIManager>
 	/// <returns></returns>
 	public bool IsRegisterWindow(int windowID)
 	{
-		bool isRegister = this.managedWindowIds.Contains (windowID);
-
 		return this.managedWindowIds.Contains(windowID);
 	}
 
