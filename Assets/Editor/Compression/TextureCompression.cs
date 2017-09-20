@@ -106,7 +106,8 @@ public class TextureCompression : SingletonBase<TextureCompression>
 
 		// setting
 		int size = alphaHalfSize ? Mathf.Max(src.width / 2, src.height / 2, 32) : Mathf.Max(src.width, src.height, 32);
-		ReImportAsset(saveAssetPath, size);
+		ReImportAsset(saveAssetPath, size, androidFormat:TextureImporterFormat.ETC_RGB4, 
+			iosFormat:TextureImporterFormat.PVRTC_RGB4);
 
 		return (Texture2D)AssetDatabase.LoadAssetAtPath(saveAssetPath, typeof(Texture2D));
 	}
@@ -116,40 +117,20 @@ public class TextureCompression : SingletonBase<TextureCompression>
 		if (src == null)
 			throw new ArgumentNullException("src");
 
-		var srcPixels = src.GetPixels();
-		var tarPixels = new Color[srcPixels.Length];
-		for (int i = 0; i < srcPixels.Length; i++)
-		{
-            float r = srcPixels[i].r;
-            float g = srcPixels[i].g;
-            float b = srcPixels[i].b;
-			float a = srcPixels[i].a;
-
-            if (a < 1.0f - 0.001f)
-            {
-                tarPixels[i] = new Color(0f, 0f, 0f);
-                continue;
-            }
-
-			tarPixels[i] = new Color(r, g, b);
-		}
-
-		Texture2D rgbTex = new Texture2D(src.width, src.height, TextureFormat.RGB24, false);
-        rgbTex.SetPixels(tarPixels);
-		rgbTex.Apply();
-
 		string srcPath = path;
 		if (string.IsNullOrEmpty(srcPath))
 			srcPath = AssetDatabase.GetAssetPath(src);
 
 		string saveAssetPath = GetRGBTexPath(srcPath);
-		byte[] bytes = rgbTex.EncodeToPNG();
-		MLFileUtil.SaveFile(saveAssetPath, bytes);
+
+		AssetDatabase.DeleteAsset(saveAssetPath);
+		AssetDatabase.CopyAsset(srcPath, saveAssetPath);
 		AssetDatabase.SaveAssets();
 		AssetDatabase.Refresh();
 
 		int size = Mathf.Max(src.width, src.height, 32);
-		ReImportAsset(saveAssetPath, size);
+		ReImportAsset(saveAssetPath, size, androidFormat:TextureImporterFormat.ETC_RGB4, 
+			iosFormat:TextureImporterFormat.PVRTC_RGB4);
 
 		return (Texture2D)AssetDatabase.LoadAssetAtPath(saveAssetPath, typeof(Texture2D));
 	}
@@ -157,8 +138,9 @@ public class TextureCompression : SingletonBase<TextureCompression>
 
 	#region texture importer
 	public void ReImportAsset(string path, int maxSize, bool alphaIsTransparency = false,
-                              TextureImporterFormat format = TextureImporterFormat.Automatic,
-                              TextureImporterNPOTScale npotScale = TextureImporterNPOTScale.ToNearest)
+								TextureImporterFormat androidFormat = TextureImporterFormat.Automatic,
+								TextureImporterFormat iosFormat = TextureImporterFormat.Automatic, 
+                              	TextureImporterNPOTScale npotScale = TextureImporterNPOTScale.ToNearest)
     {
         var importer = AssetImporter.GetAtPath(path) as TextureImporter;
 
@@ -184,11 +166,11 @@ public class TextureCompression : SingletonBase<TextureCompression>
         importer.npotScale = npotScale;
 
 #if UNITY_5_5_OR_NEWER
-        importer.SetPlatformTextureSettings(CreateTexPlatformSettings("iphone", maxSize, format));
-        importer.SetPlatformTextureSettings(CreateTexPlatformSettings("Android", maxSize, format));
+		importer.SetPlatformTextureSettings(CreateTexPlatformSettings("iphone", maxSize, iosFormat));
+		importer.SetPlatformTextureSettings(CreateTexPlatformSettings("Android", maxSize, androidFormat));
 #else
-        importer.SetPlatformTextureSettings("iPhone", maxSize, format);
-		importer.SetPlatformTextureSettings("Android", maxSize, format);
+		importer.SetPlatformTextureSettings("iPhone", maxSize, iosFormat);
+		importer.SetPlatformTextureSettings("Android", maxSize, androidFormat);
 #endif
 
         AssetDatabase.ImportAsset(path);
