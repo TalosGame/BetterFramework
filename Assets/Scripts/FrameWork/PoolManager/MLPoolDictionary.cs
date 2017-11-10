@@ -1,15 +1,12 @@
-//
-// Class:	MLObjectPool.cs
-// Date:	2017/8/28 20:31
+﻿//
+// Class:	MLPoolDictionary.cs
+// Date:	2017/11/9 11:31
 // Author: 	Miller
 // Email:	wangquan <wangquancomi@gmail.com>
 // QQ:		408310416
 // Desc:
-// 1.自定义类通用对象池
-// 
-// History:
-// 2017/11/10 
-//   1.优化掉box和unbox操作
+// 1.为了使对象池能实现范型通用设计目标, 这里定义一个池接口，
+// 	 便于池管理器中维护各种对象池.
 //
 // Copyright (c) 2017 - 2018
 //
@@ -31,58 +28,53 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
-public class MLObjectPool<T> : MLPoolBase<T> where T : class
+public class MLPoolDictionary
 {
-	public override void Init (T poolItem, int preloadAmount = 10, Transform parent = null, bool isLimit = true)
-	{
-		Type t = typeof(T);
-		this.itemName = t.FullName;
+	private Dictionary<string, IMLPool> pools = new Dictionary<string, IMLPool>();
 
-		this.preloadAmount = preloadAmount;
-		this.limitAmount = this.preloadAmount << 1;
-		this.limitInstances = isLimit;
+	public IMLPool CreatePool(Type type)
+	{
+		if (type == null)
+		{
+			Debug.LogError("Get class reflect error! type name:" + type.Name);
+			return null;
+		}
+
+		return Activator.CreateInstance(type) as IMLPool;
 	}
 
-	public override void CreatePoolItems()
+	public void AddPool(string key, IMLPool pool)
 	{
-		for (int i = 0; i < preloadAmount; i++)
+		if (pools.ContainsKey (key)) 
 		{
-			T item = SpawnNewItem();
-			if (item == null)
-				break;
-
-			freeObjects.Push(item);
-		}
-    }
-
-	public override T SpawnNewItem()
-    {
-		T item = Activator.CreateInstance<T>();
-		if (item == null)
-		{
-            Debug.LogError("Create instance error!");
-			return default(T);
+			Debug.LogError ("Pool is already exist! key:" + key);
+			return;
 		}
 
-        return item;
-    }
+		pools.Add (key, pool);
+	}
 
-	public override bool Despawn(T item)
-    {
-		if (!usedObjects.Contains(item))
+	public IMLPool GetPool(string poolItem)
+	{
+		IMLPool cachePool = null;
+		if(!pools.TryGetValue(poolItem, out cachePool))
 		{
-			return false;
+			Debug.LogWarning("Can't find item in any pool error! ItemName:" + poolItem);
+			return null;
 		}
 
-		usedObjects.Remove(item);
+		return cachePool;
+	}
 
-		// recycle used object
-        freeObjects.Push(item);
-		return true;
-    }
+	public Dictionary<string, IMLPool>.Enumerator GetEnumerator()
+	{
+		return pools.GetEnumerator ();
+	}
 }
+
+

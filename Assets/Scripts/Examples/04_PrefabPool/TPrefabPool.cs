@@ -30,7 +30,7 @@ public class TPrefabPool : MonoBehaviour
     void Start ()
     {
         GameObject roleObj = MLResourceManager.Instance.LoadResource(POOL_ITEM_NAME, GameResourceType.RES_ROLE) as GameObject;
-        poolMgr.CreatePool<MLPrefabPool, Transform>(roleObj.transform, 10);
+		poolMgr.CreatePool<MLPrefabPool, Transform>(roleObj.transform, 10);
 	}
 
 	void OnGUI () 
@@ -78,7 +78,7 @@ public class TPrefabPool : MonoBehaviour
 		if (liveObjects.Count <= 0)
 			return;
 
-        poolMgr.DespawnAll<Transform>(POOL_ITEM_NAME);
+        poolMgr.DespawnAll(POOL_ITEM_NAME);
         liveObjects.Clear();
     }
 }

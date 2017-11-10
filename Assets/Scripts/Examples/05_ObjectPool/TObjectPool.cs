@@ -36,7 +36,7 @@ public class TObjectPool : MonoBehaviour
 
     void Start()
     {
-        poolMgr.CreatePool<MLObjectPool, TestObjectItem>(preloadAmount:10);
+		poolMgr.CreatePool<MLObjectPool<TestObjectItem>, TestObjectItem>(preloadAmount:10);
     }
 
 	void OnGUI()
@@ -64,7 +64,7 @@ public class TObjectPool : MonoBehaviour
 
     private void DebugInfo()
     {
-		MLPoolBase pool = MLPoolManager.Instance.GetPool<TestObjectItem>(POOL_ITEM_NAME);
+		MLPoolBase<TestObjectItem> pool = MLPoolManager.Instance.GetPool<TestObjectItem>(POOL_ITEM_NAME);
 
 		GUI.Label(new Rect(400, 10, 200, 32), "Object free num:" + pool.FreeObjectsCount
 				  + " used num:" + pool.UsedObjectsCount, labStyle);
@@ -112,7 +112,7 @@ public class TObjectPool : MonoBehaviour
 		if (liveObjects.Count <= 0)
 			return;
 
-		poolMgr.DespawnAll<TestObjectItem>(POOL_ITEM_NAME);
+		poolMgr.DespawnAll(POOL_ITEM_NAME);
 		liveObjects.Clear();
     }
 

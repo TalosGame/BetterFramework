@@ -1,14 +1,16 @@
 ﻿//
-// MLPoolManager.cs
-//
-// Author:
-//       wangquan <wangquancomi@gmail.com>
-//       QQ: 408310416
+// Class:	MLPoolManager.cs
+// Date:	2017/8/28 20:31
+// Author: 	Miller
+// Email:	wangquan <wangquancomi@gmail.com>
+// QQ:		408310416
 // Desc:
-//      1.同时管理预制池和对象池
-//      2.统一从池生成和回收接口
-//      3.管理类为类使接口统一，在对象池管理这里有装
-//        箱拆箱牺牲了一点性能
+// 1.统一通过池管理器来管理池
+// 2.可以同时管理预制池和对象池
+//
+// History:
+// 2017/11/10 
+//   1. 通过自定义池字典维护池
 // 
 // Copyright (c) 2017 
 //
@@ -38,7 +40,7 @@ using System.Collections.Generic;
 
 public class MLPoolManager : MonoSingleton<MLPoolManager>
 {
-    private Dictionary<string, MLPoolBase> pools = new Dictionary<string, MLPoolBase>();
+	private MLPoolDictionary pools = new MLPoolDictionary();
 
     [SerializeField]
     private bool dontDestroyOnLoad = false;
@@ -63,79 +65,67 @@ public class MLPoolManager : MonoSingleton<MLPoolManager>
         }
     }
 
-    public void CreatePool<TP, TI>(TI poolItem = null, int preloadAmount = 10, bool isLimit = true) 
-        where TP : MLPoolBase
-        where TI : class
+    public void CreatePool<TP, T>(T poolItem = null, int preloadAmount = 10, bool isLimit = true) 
+		where TP : MLPoolBase<T>
+        where T  : class
     {
-        MLPoolBase pool = CreatePoolClass<TP>() as MLPoolBase;
-        if(pool == null)
-        {
-            return;
-        }
+		Type type = typeof(TP);
+		MLPoolBase<T> pool = pools.CreatePool (type) as MLPoolBase<T>;
+		if (pool == null) 
+		{
+			return;
+		}
 
-        pool.Init<TI>(poolItem, preloadAmount, transform, isLimit);
-        pool.CreatePoolItems<TI>();
+        pool.Init(poolItem, preloadAmount, transform, isLimit);
+        pool.CreatePoolItems();
 
-        pools.Add(pool.itemName, pool);
+		pools.AddPool (pool.ItemName, pool);
     }
 
-    private object CreatePoolClass<T>()
+	public MLPoolBase<T> GetPool<T>(string poolItem) where T : class
 	{
-        Type type = typeof(T);
-		if (type == null)
+		IMLPool pool = pools.GetPool(poolItem);
+		if (pool == null)
 		{
-            Debug.Log("get class reflect error! type name:" + type.Name);
 			return null;
 		}
 
-		return Activator.CreateInstance(type);
+		return pool as MLPoolBase<T>;
 	}
 
-    public MLPoolBase GetPool<T>(string poolItem) where T : class
-	{
-        MLPoolBase cachePool = null;
-        if(!pools.TryGetValue(poolItem, out cachePool))
-        {
-			Debug.LogWarning("Can't find item in any pool error! ItemName:" + poolItem);
-			return null;
-        }
-
-        return cachePool;
-	}
-
-    public T Spawn<T>(string poolItem) where T : class
+	public T Spawn<T>(string poolItem) where T : class
 	{
 		return Spawn<T>(poolItem, null);
 	}
 
-    public T Spawn<T>(string poolItem, Transform parent) where T : class
+	public T Spawn<T>(string poolItem, Transform parent) where T : class
 	{
-        MLPoolBase pool = GetPool<T>(poolItem);
+		MLPoolBase<T> pool = pools.GetPool(poolItem) as MLPoolBase<T>;
 		if(pool == null)
 		{
-            return default(T);
+			return null;
 		}
 
-		return pool.Spawn<T>(parent);
+		return pool.Spawn(parent);
 	}
 
-    public void Despawn<T>(string poolItem, T item) where T : class
+	public void Despawn<T>(string poolItem, T item) where T : class
     {
-		MLPoolBase pool = GetPool<T>(poolItem);
+		MLPoolBase<T> pool = pools.GetPool(poolItem) as MLPoolBase<T>;
         if (pool == null)
         {
             return;
         }
 
-        if (!pool.Despawn<T>(item))
+        if (!pool.Despawn(item))
         {
             Debug.LogError("Don't Despawn duplicate Object!");
         }
     }
 
-    public void DespawnAll<T>(string poolItem) where T : class
+	public void DespawnAll(string poolItem)
     {
-		MLPoolBase pool = GetPool<T>(poolItem);
+		IMLPool pool = pools.GetPool(poolItem);
 		if (pool == null)
 		{
 			return;
@@ -144,12 +134,12 @@ public class MLPoolManager : MonoSingleton<MLPoolManager>
         pool.DespawnAll();
     }
 
-    public void DespawnAll()
+	public void DespawnAll()
     {
         var enumera = pools.GetEnumerator();
         while (enumera.MoveNext())
         {
-            MLPoolBase pool = enumera.Current.Value;
+			IMLPool pool = enumera.Current.Value;
             pool.DespawnAll();
         }
     }
