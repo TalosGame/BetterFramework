@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class TNotification : MonoBehaviour
+public class TNotification : MonoBehaviour, INotification
 {
 	private const string NOTIFY_HANDLE_POST_VALUE = "notify_handle_post_value";
 	private const string NOTIFY_HANDLE_POST_USERINFO = "notify_handle_post_useinfo";
@@ -11,9 +11,25 @@ public class TNotification : MonoBehaviour
 
 	void Awake()
 	{
-		NotificationCenter.Instance.AddObserver(this, NOTIFY_HANDLE_POST_VALUE, HandleGetValue);
-        NotificationCenter.Instance.AddObserver(this, NOTIFY_HANDLE_POST_USERINFO, HandleGetUserInfo);
+		NotificationCenter.Instance.AddObserver(NOTIFY_HANDLE_POST_VALUE, this);
+        NotificationCenter.Instance.AddObserver(NOTIFY_HANDLE_POST_USERINFO, this);
 	}
+
+    public void NotificationHandler(Notification notify) 
+    {
+        var evtName = notify.name;
+        if (evtName == NOTIFY_HANDLE_POST_VALUE) 
+        {
+            HandleGetValue(notify);
+            return;
+        }
+
+        if (evtName == NOTIFY_HANDLE_POST_USERINFO) 
+        {
+            HandleGetUserInfo(notify);
+            return;
+        }
+    }
 
 	private void HandleGetValue(Notification notify)
 	{
@@ -53,5 +69,10 @@ public class TNotification : MonoBehaviour
 		{
             NotificationCenter.Instance.RemoveObserver(this, NOTIFY_HANDLE_POST_VALUE);
 		}
+
+        if (Input.GetKeyUp(KeyCode.G)) 
+        {
+            NotificationCenter.Instance.RemoveObserver(NOTIFY_HANDLE_POST_VALUE);
+        }
 	}
 }

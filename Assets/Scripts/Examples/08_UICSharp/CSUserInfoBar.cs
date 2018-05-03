@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class CSUserInfoBar : UIWindowBase 
+public class CSUserInfoBar : UIWindowBase, INotification
 {
     private UILabel coinLab;
 
@@ -24,12 +24,22 @@ public class CSUserInfoBar : UIWindowBase
 			RefreshCoin((int)data);
         }
 
-        NotificationCenter.Instance.AddObserver(this, GameConst.NOTIFY_HANDLE_BUY_COIN, HandleBuyCoin);
+        NotificationCenter.Instance.AddObserver(GameConst.NOTIFY_HANDLE_BUY_COIN, this);
     }
 
     protected override void OnHideWindow()
     {
         NotificationCenter.Instance.RemoveObserver(this);
+    }
+
+    public void NotificationHandler(Notification notify) 
+    {
+        var evtName = notify.name;
+        if (evtName == GameConst.NOTIFY_HANDLE_BUY_COIN) 
+        {
+            HandleBuyCoin(notify);
+            return;
+        }
     }
 
     private void HandleBuyCoin(Notification notify)

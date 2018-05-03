@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class T1Notification : MonoBehaviour
+public class T1Notification : MonoBehaviour, INotification
 {
 	private const string NOTIFY_HANDLE_POST_VALUE = "notify_handle_post_value";
 	private const string NOTIFY_HANDLE_POST_USERINFO = "notify_handle_post_useinfo";
@@ -10,9 +10,23 @@ public class T1Notification : MonoBehaviour
 
 	void Awake()
 	{
-		NotificationCenter.Instance.AddObserver(this, NOTIFY_HANDLE_POST_VALUE, HandleGetValue);
-        NotificationCenter.Instance.AddObserver(this, NOTIFY_HANDLE_POST_USERINFO, HandleGetUserInfo);
+		NotificationCenter.Instance.AddObserver(NOTIFY_HANDLE_POST_VALUE, this);
+        NotificationCenter.Instance.AddObserver(NOTIFY_HANDLE_POST_USERINFO, this);
 	}
+
+    public void NotificationHandler(Notification notify) 
+    {
+        var evtName = notify.name;
+        if (evtName == NOTIFY_HANDLE_POST_VALUE) {
+            HandleGetValue(notify);
+            return;
+        }
+
+        if (evtName == NOTIFY_HANDLE_POST_USERINFO) {
+            HandleGetUserInfo(notify);
+            return;
+        }
+    }
 
 	private void HandleGetValue(Notification notify)
 	{

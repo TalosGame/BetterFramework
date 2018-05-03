@@ -8,7 +8,7 @@ using UnityEngine;
 /// <summary>
 /// 热更新管理器
 /// </summary>
-public class HotUpdateMgr : DDOLSingleton<HotUpdateMgr>
+public class HotUpdateMgr : DDOLSingleton<HotUpdateMgr>, INotification
 {
     // 热更新资源完成
     public VoidDelegate DoHotUpdateComplete;
@@ -56,12 +56,22 @@ public class HotUpdateMgr : DDOLSingleton<HotUpdateMgr>
     #region 热更新事件处理
     public void RegisterHotUpdateEventHandle()
     {
-        NotificationCenter.Instance.AddObserver(this, GameConst.NOTIFY_HANDLE_UI_LOADING_COMPLETE, DoHotUpdateEnd);
+        NotificationCenter.Instance.AddObserver(GameConst.NOTIFY_HANDLE_UI_LOADING_COMPLETE, this);
     }
 
     public void RemoveHotUpdateEventHandle()
     {
         NotificationCenter.Instance.RemoveObserver(this);
+    }
+
+    public void NotificationHandler(Notification notify) 
+    {
+        var evtName = notify.name;
+        if (evtName == GameConst.NOTIFY_HANDLE_UI_LOADING_COMPLETE) 
+        {
+            DoHotUpdateEnd(notify);
+            return;
+        }
     }
 
     public void DoHotUpdateEnd(Notification notify)

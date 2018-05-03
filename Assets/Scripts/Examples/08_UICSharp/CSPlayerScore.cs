@@ -7,7 +7,7 @@ using UnityEngine;
 /// 2. OnContentUpdate 控件内容有更新会回调这个接口
 /// 3. OnContentClick 控件内的Item有点击事件的情况会回调这个接口
 /// </summary>
-public class CSPlayerScore : UIWindowBase
+public class CSPlayerScore : UIWindowBase, INotification
 {
     private UILoopScrollView loopScrollView;
 
@@ -31,12 +31,22 @@ public class CSPlayerScore : UIWindowBase
 
 	protected override void OnShowWindow(object param = null)
     {
-        NotificationCenter.Instance.AddObserver(this, GameConst.NOTIFY_HANDLE_GET_SCORE, HandleGetScore);
+        NotificationCenter.Instance.AddObserver(GameConst.NOTIFY_HANDLE_GET_SCORE, this);
     }
 
     protected override void OnHideWindow()
     {
         NotificationCenter.Instance.RemoveObserver(this);
+    }
+
+    public void NotificationHandler(Notification notify) 
+    { 
+        var evtName = notify.name;
+        if (evtName == GameConst.NOTIFY_HANDLE_GET_SCORE) 
+        {
+            HandleGetScore(notify);
+            return;
+        }
     }
 
     private void HandleGetScore(Notification notify)

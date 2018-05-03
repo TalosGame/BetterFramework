@@ -32,16 +32,21 @@
 using UnityEngine;
 using System.Collections.Generic;
 
+/// <summary>
+/// 继承该接口，有接受消息能力
+/// </summary>
+public interface INotification 
+{
+    void NotificationHandler(Notification notify);
+}
+
 public class NotificationCenter : SingletonBase<NotificationCenter>
 {
-	// 消息处理中间件
-	public delegate void NotificationHandler(Notification notify);
-
-    private Dictionary<string, Dictionary<object, NotificationHandler>> notifications = new Dictionary<string, Dictionary<object, NotificationHandler>>();
+    private Dictionary<string, List<INotification>> notifications = new Dictionary<string, List<INotification>>();
     private List<string> removeKeys = new List<string>();
 
     #region 添加观察监听事件
-    public void AddObserver(object observer, string name, NotificationHandler handler)
+    public void AddObserver(string name, INotification observer)
     {
         if(string.IsNullOrEmpty(name))
         {
@@ -49,49 +54,62 @@ public class NotificationCenter : SingletonBase<NotificationCenter>
             return;
         }
 
-        if(handler == null)
+        if (observer == null)
         {
             Debug.LogError("Notification handle can't be null!");
             return;
         }
 
-        Dictionary<object, NotificationHandler> handlers = null;
-        if(!notifications.TryGetValue(name, out handlers))
+        List<INotification> observers = null;
+        if(!notifications.TryGetValue(name, out observers))
         {
-            handlers = new Dictionary<object, NotificationHandler>();
-            notifications.Add(name, handlers);
+            observers = new List<INotification>();
+            notifications.Add(name, observers);
         }
 
-        if(handlers.ContainsKey(observer))
+        if(observers.Contains(observer))
         {
             return;
         }
 
-        handlers.Add(observer, handler);
+        observers.Add(observer);
     }
 	#endregion
 
 	#region 移除观察者
+    /// <summary>
+    /// 移除所有该事件的所有监听者
+    /// </summary>
+    /// <param name="name"></param>
+    public void RemoveObserver(string name) 
+    {
+        List<INotification> observers = null;
+        if (!notifications.TryGetValue(name, out observers)) 
+        {
+            return;
+        }
+
+        observers.Clear();
+    }
+
 	/// <summary>
 	/// 移除观察者中所有的监听事件
 	/// </summary>
 	/// <param name="observer">Observer.</param>
-	public void RemoveObserver(object observer)
+	public void RemoveObserver(INotification observer)
     {
         removeKeys.Clear();
 
         var enumerator = notifications.GetEnumerator();
         while(enumerator.MoveNext())
         {
-            Dictionary<object, NotificationHandler> handlers = enumerator.Current.Value;
-            if(!handlers.ContainsKey(observer))
+            List<INotification> observers = enumerator.Current.Value;
+            if(!observers.Remove(observer))
             {
                 continue;
             }
 
-            handlers.Remove(observer);
-
-            if(handlers.Count <= 0)
+            if(observers.Count <= 0)
             {
                 removeKeys.Add(enumerator.Current.Key);
             }
@@ -108,21 +126,20 @@ public class NotificationCenter : SingletonBase<NotificationCenter>
 	/// </summary>
 	/// <param name="observer">Observer.</param>
 	/// <param name="name">Name.</param>
-	public void RemoveObserver(object observer, string name)
+	public void RemoveObserver(INotification observer, string name)
     {
-        Dictionary<object, NotificationHandler> handlers = null;
-        if(!notifications.TryGetValue(name, out handlers))
+        List<INotification> observers = null;
+        if(!notifications.TryGetValue(name, out observers))
         {
             return;
         }
 
-        if(!handlers.ContainsKey(observer))
+        if(!observers.Remove(observer))
         {
             return;
         }
 
-        handlers.Remove(observer);
-        if(handlers.Count <= 0)
+        if(observers.Count <= 0)
         {
             notifications.Remove(name);
         }
@@ -141,19 +158,18 @@ public class NotificationCenter : SingletonBase<NotificationCenter>
 
     public void PostNotification(string name, object obj, params object []userInfo)
     {
-        Dictionary<object, NotificationHandler> handlers = null;
-        if(!notifications.TryGetValue(name, out handlers))
+        List<INotification> observers = null;
+        if(!notifications.TryGetValue(name, out observers))
         {
             return;
         }
 
         Notification notify = new Notification(name, obj, userInfo);
 
-        var enumerator = handlers.GetEnumerator();
-        while(enumerator.MoveNext())
+        for (int i = 0; i < observers.Count; i++) 
         {
-            NotificationHandler handle = enumerator.Current.Value;
-            handle(notify);
+            INotification observer = observers[i];
+            observer.NotificationHandler(notify);
         }
     }
     #endregion
